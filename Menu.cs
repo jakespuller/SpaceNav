@@ -113,7 +113,19 @@ public class Menu : MonoBehaviour
 										gd.automation_level = (gd.gameLevel + 2) % 4;
 									}					
 									string level = "";
-									
+									string delay_str = " ";
+									gd.automation_level = pathMarker.NONE;
+									float lowDelay = 0.0f;
+									float midDelay = 0.0f;
+									float highDelay = 0.0f;
+									gd.pram_list.experimentSessions [experiment_level - 1].TryGetValue("lowDelayAA", out lowDelay);
+									gd.pram_list.experimentSessions [experiment_level - 1].TryGetValue("medDelayAA", out midDelay);
+									gd.pram_list.experimentSessions [experiment_level - 1].TryGetValue("highDelayAA", out highDelay);
+									if (lowDelay == midDelay && midDelay == highDelay) {
+										delay_str = lowDelay.ToString();								
+									} else {
+										delay_str = "non-uniform";
+									}
 									switch (gd.automation_level) 
 									{
 										case 0:
@@ -134,14 +146,14 @@ public class Menu : MonoBehaviour
 									}
 									if (gd.gameLevel == 1)
 									{
-										gd.automation_level = pathMarker.NONE;
-										if (GUI.Button(new Rect (4 * widthUnit, 5 * heightUnit, 8 * widthUnit, 4 * heightUnit), "Start Game " + gd.gameLevel + "\n Automation: " + level, inputButton))
+										if (GUI.Button(new Rect (4 * widthUnit, 5 * heightUnit, 8 * widthUnit, 4 * heightUnit), "Start Game " + gd.gameLevel + "\n Automation: " + level + "\n Delay:" + delay_str, inputButton))
 										{
 										gd.unique_id = uniqueID;
 										LoadLevel (1);
 										}
 									}
-									if (GUI.Button (new Rect (4 * widthUnit, 4 * heightUnit, 8 * widthUnit, 4 * heightUnit), "Automation Setting " + level + " \nInstance " + Mathf.Floor ((gd.gameLevel - 2) / 4), inputButton)) 
+									if (GUI.Button (new Rect (4 * widthUnit, 4 * heightUnit, 8 * widthUnit, 5 * heightUnit), "Automation Setting " + level + " \nInstance " + Mathf.Floor ((gd.gameLevel - 2) / 4) + "" +
+										"\n Delay: " + delay_str, inputButton)) 
 									{
 										gd.unique_id = read_id();
 										LoadLevel (1);
