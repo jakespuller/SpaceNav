@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: d2dbdc2fa4358418196f40330e29c4d7
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - marker: {instanceID: 0}
+  - dot1: {instanceID: 0}
+  - dot2: {instanceID: 0}
+  - dot3: {instanceID: 0}
+  - assignedToObj: {instanceID: 0}
+  - posScorePopUp: {fileID: 13200000, guid: e97cf7cab22fe9145ad88bd5ddfaa92f, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
