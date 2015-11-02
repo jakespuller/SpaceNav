@@ -71,9 +71,11 @@ public class Menu : MonoBehaviour
 						} catch (System.NullReferenceException ex){}
 						//If it's the first game
 						if (gd.gameLevel == 1)
-						{
+						{	
+							Debug.Log ("before method call");
+							Debug.Log (isDelaySame (gd, gd.gameLevel));
 							gd.automation_level = pathMarker.NONE;
-							if (GUI.Button(new Rect (4 * widthUnit, 5 * heightUnit, 8 * widthUnit, 4 * heightUnit), "Start Game " + gd.gameLevel, inputButton))
+							if (GUI.Button(new Rect (4 * widthUnit, 5 * heightUnit, 8 * widthUnit, 4 * heightUnit), "Start Game " + gd.gameLevel +"\n Delay: " + isDelaySame(gd, 1), inputButton))
 							{
 								gd.unique_id = uniqueID;
 								LoadLevel (1);
@@ -81,7 +83,8 @@ public class Menu : MonoBehaviour
 						} else if (numWarmupGames >= gd.gameLevel) 
 						{
 							gd.automation_level = pathMarker.NONE; //***CHANGE THIS ONE TOO***
-							if (GUI.Button(new Rect (4 * widthUnit, 4 * heightUnit, 8 * widthUnit, 4 * heightUnit), "Start Game " + gd.gameLevel, inputButton)) 
+							Debug.Log ("At menu button");
+							if (GUI.Button(new Rect (4 * widthUnit, 4 * heightUnit, 8 * widthUnit, 4 * heightUnit), "Start Game " + gd.gameLevel + "\n Delay: " + isDelaySame(gd, gd.gameLevel), inputButton)) 
 							{
 								gd.unique_id = read_id ();
 								LoadLevel (1);
@@ -112,20 +115,7 @@ public class Menu : MonoBehaviour
 									{
 										gd.automation_level = (gd.gameLevel + 2) % 4;
 									}					
-									string level = "";
-									string delay_str = " ";
-									gd.automation_level = pathMarker.NONE;
-									float lowDelay = 0.0f;
-									float midDelay = 0.0f;
-									float highDelay = 0.0f;
-									gd.pram_list.experimentSessions [experiment_level - 1].TryGetValue("lowDelayAA", out lowDelay);
-									gd.pram_list.experimentSessions [experiment_level - 1].TryGetValue("medDelayAA", out midDelay);
-									gd.pram_list.experimentSessions [experiment_level - 1].TryGetValue("highDelayAA", out highDelay);
-									if (lowDelay == midDelay && midDelay == highDelay) {
-										delay_str = lowDelay.ToString();								
-									} else {
-										delay_str = "non-uniform";
-									}
+									string level ="";
 									switch (gd.automation_level) 
 									{
 										case 0:
@@ -146,7 +136,7 @@ public class Menu : MonoBehaviour
 									}
 									if (gd.gameLevel == 1)
 									{
-										if (GUI.Button(new Rect (4 * widthUnit, 5 * heightUnit, 8 * widthUnit, 4 * heightUnit), "Start Game " + gd.gameLevel + "\n Automation: " + level + "\n Delay:" + delay_str, inputButton))
+										if (GUI.Button(new Rect (4 * widthUnit, 5 * heightUnit, 8 * widthUnit, 4 * heightUnit), "Start Game " + gd.gameLevel + "\n Automation: " + level + "\n Delay:" + isDelaySame(gd, experiment_level), inputButton))
 										{
 										gd.unique_id = uniqueID;
 										LoadLevel (1);
@@ -226,5 +216,23 @@ public class Menu : MonoBehaviour
 				}
 			}
 			return "id" + id;
+		}
+		string isDelaySame(gameData gd, int level) {
+			string delay_str = " ";
+			gd.automation_level = pathMarker.NONE;
+			float lowDelay = 0.0f;
+			float midDelay = 0.0f;
+			float highDelay = 0.0f;
+			Debug.Log ("before pram search");
+			gd.pram_list.experimentSessions [level - 1].TryGetValue("lowDelayAA", out lowDelay);
+			gd.pram_list.experimentSessions [level - 1].TryGetValue("medDelayAA", out midDelay);
+			gd.pram_list.experimentSessions [level - 1].TryGetValue("highDelayAA", out highDelay);
+			if (lowDelay == midDelay && midDelay == highDelay) {
+				delay_str = lowDelay.ToString();								
+			} else {
+				delay_str = "non-uniform";
+			}
+		Debug.Log ("Return " + delay_str);
+		return delay_str;
 		}
 }
