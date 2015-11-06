@@ -1,0 +1,12 @@
+fileFormatVersion: 2
+guid: 0000060eeb32f4af3abb1d667c7ccd3c
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - targetReachedAnimation: {instanceID: 0}
+  - collidedAnimation: {instanceID: 0}
+  - posScorePopUp: {fileID: 13200000, guid: e97cf7cab22fe9145ad88bd5ddfaa92f, type: 2}
+  - negScorePopUp: {fileID: 13200000, guid: 8fc50a24e17c7d144a0d5509100fd001, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
