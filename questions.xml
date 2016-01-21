@@ -1,0 +1,141 @@
+<questions> 
+	<numQuestions>21</numQuestions>
+	<question1>
+		<question>Select ONE rating that best indicates your workload for the just-completed level.</question>
+		<questionType>1</questionType>
+		<questionAnswer1>1. Under-Utilized: Nothing to do. Rather boring.</questionAnswer1>
+		<questionAnswer2>2. Relaxed: More than enough time for all tasks. Active on the task less than 50% of the time.</questionAnswer2>
+		<questionAnswer3>3. Comfortably Busy Pace: All tasks well in hand. Busy but stimulating pace. Could keep going continuously at this level.</questionAnswer3>
+		<questionAnswer4>4. High: Non-essential tasks suffering. Could not work at this level very long.</questionAnswer4>
+		<questionAnswer5>5. Excessive: Behind on tasks. Losing track of the full picture.</questionAnswer5>
+	</question1>
+	<question2>
+		<question>Mental Demand: How much mental and perceptual activity was required? Was the task easy or demanding, simple or complex?</question>
+		<questionType>2</questionType>
+		<questionMinInput>0</questionMinInput>
+		<questionMaxInput>100</questionMaxInput>
+		<questionMinCaption>Low</questionMinCaption>
+		<questionMaxCaption>High</questionMaxCaption>
+	</question2>
+	<question3>
+		<question>Temporal Demand:  How much time pressure did you feel due to the pace at which the tasks or task elements occured?  Was the pace slow or rapid?</question>
+		<questionType>2</questionType>
+		<questionMinInput>0</questionMinInput>
+		<questionMaxInput>100</questionMaxInput>
+		<questionMinCaption>Low</questionMinCaption>
+		<questionMaxCaption>High</questionMaxCaption>
+	</question3>	
+	<question4>
+		<question>Effort:  How hard did you have to work (mentally and physically) to accomplish your level of performance?</question>
+		<questionType>2</questionType>
+		<questionMinInput>0</questionMinInput>
+		<questionMaxInput>100</questionMaxInput>
+		<questionMinCaption>Low</questionMinCaption>
+		<questionMaxCaption>High</questionMaxCaption>
+	</question4>	
+	<question5>
+		<question>Performance:  How successful were you in performing the task?  How satisfied were you with your performance?</question>
+		<questionType>2</questionType>
+		<questionMinInput>0</questionMinInput>
+		<questionMaxInput>100</questionMaxInput>
+		<questionMinCaption>Low</questionMinCaption>
+		<questionMaxCaption>High</questionMaxCaption>
+	</question5>
+	<question6>
+		<question>How do you think the automation impacted your ability to perform optimally?</question>
+		<questionType>2</questionType>
+		<questionMinInput>0</questionMinInput>
+		<questionMaxInput>100</questionMaxInput>
+		<questionMinCaption>Low</questionMinCaption>
+		<questionMaxCaption>High</questionMaxCaption>
+	</question6>
+	<question7>
+		<question>Enter Name</question>
+		<questionType>3</questionType>
+	</question7>
+	<question8>
+		<question>Enter Email Address</question>
+		<questionType>3</questionType>
+	</question8>
+	<question9>
+		<question>Enter Age</question>
+		<questionType>3</questionType>
+	</question9>
+	<question10>
+		<question>Enter Handedness</question>
+		<questionType>3</questionType>
+	</question10>
+	<question11>
+		<question>On a scale of 1 to 5, with one being no exposure and 5 being several years, how much experience do you have with the following: General gaming experience</question>
+		<questionType>2</questionType>
+		<questionMinInput>0</questionMinInput>
+		<questionMaxInput>5</questionMaxInput>
+		<questionMinCaption>No exposure</questionMinCaption>
+		<questionMaxCaption>Several years</questionMaxCaption>
+	</question11>
+	<question12>
+		<question>Experience with this type of device/interface:</question>
+		<questionType>2</questionType>
+		<questionMinInput>0</questionMinInput>
+		<questionMaxInput>5</questionMaxInput>
+		<questionMinCaption>No exposure</questionMinCaption>
+		<questionMaxCaption>Several years</questionMaxCaption>
+	</question12>
+	<question13>
+		<question>Experience with this specifc type of game-play mechanic:</question>
+		<questionType>2</questionType>
+		<questionMinInput>0</questionMinInput>
+		<questionMaxInput>5</questionMaxInput>
+		<questionMinCaption>No exposure</questionMinCaption>
+		<questionMaxCaption>Several years</questionMaxCaption>
+	</question13>
+	<question14>
+		<question>What was the most challenging aspect of playing the game?</question>
+		<questionType>3</questionType>		
+	</question14>
+	<question15>
+		<question>How did the way you played the game change over time?</question>
+		<questionType>3</questionType>		
+	</question15>
+	<question16>
+		<question>Did you notice any differences in the way the automation behaved during the experiment to help you draw paths to the planets and if so, what did you like or dislike about each automation you experienced?challenging aspect of playing the game?</question>
+		<questionType>3</questionType>		
+	</question16>
+	<question17>
+		<question>What strategies did you adopt that helped you play the game successfully?</question>
+		<questionType>3</questionType>		
+	</question17>
+	<question18>
+		<question>What strategies did you initially adopt (if any) that you later threw out as not useful?</question>
+		<questionType>3</questionType>		
+	</question18>
+	<question19>
+		<question>Did these strategies change when the automation changed?</question>
+		<questionType>3</questionType>		
+	</question19>
+	<question20>
+		<question>How did the automation affect your ability to play the game effectively?</question>
+		<questionType>3</questionType>		
+	</question20>
+	<question21>
+		<question>At times you may have felt that you had plenty of time to make decisions while playing the game and other times you may have felt hurried.  If so, how did your strategy changed when hurried verses times when you were not hurried?</question>
+		<questionType>3</questionType>		
+	</question21>
+	<question22>
+		<question></question>
+		<questionType>2</questionType>
+		<questionMinInput>0</questionMinInput>
+		<questionMaxInput>5</questionMaxInput>
+		<questionMinCaption>No exposure</questionMinCaption>
+		<questionMaxCaption>Several years</questionMaxCaption>
+	</question22>
+	<question23>
+		<question>Experience with this specifc type of game-play mechanic:</question>
+		<questionType>2</questionType>
+		<questionMinInput>0</questionMinInput>
+		<questionMaxInput>5</questionMaxInput>
+		<questionMinCaption>No exposure</questionMinCaption>
+		<questionMaxCaption>Several years</questionMaxCaption>
+	</question23>
+
+</questions>
