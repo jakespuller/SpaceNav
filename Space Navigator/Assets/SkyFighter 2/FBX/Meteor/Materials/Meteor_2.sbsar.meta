@@ -1,0 +1,156 @@
+fileFormatVersion: 2
+guid: b8955245452e55848993b0241272475a
+SubstanceImporter:
+  serializedVersion: 5
+  materialInstances:
+  - serializedVersion: 12
+    name: Meteor2_Main
+    prototypeName: Meteor2_Main
+    shader: {fileID: 13, guid: 0000000000000000f000000000000000, type: 0}
+    inputs:
+    - name: $outputsize
+      value:
+        scalar[0]: 8
+        scalar[1]: 8
+        scalar[2]: 0
+        scalar[3]: 0
+        texture: {instanceID: 0}
+    - name: $randomseed
+      value:
+        scalar[0]: 0
+        scalar[1]: 0
+        scalar[2]: 0
+        scalar[3]: 0
+        texture: {instanceID: 0}
+    - name: levelinlow
+      value:
+        scalar[0]: .292299986
+        scalar[1]: 0
+        scalar[2]: 0
+        scalar[3]: 0
+        texture: {instanceID: 0}
+    - name: levelinhigh
+      value:
+        scalar[0]: .66079998
+        scalar[1]: 0
+        scalar[2]: 0
+        scalar[3]: 0
+        texture: {instanceID: 0}
+    - name: levelinmid
+      value:
+        scalar[0]: .5
+        scalar[1]: 0
+        scalar[2]: 0
+        scalar[3]: 0
+        texture: {instanceID: 0}
+    - name: leveloutlow
+      value:
+        scalar[0]: 0
+        scalar[1]: 0
+        scalar[2]: 0
+        scalar[3]: 0
+        texture: {instanceID: 0}
+    - name: levelouthigh
+      value:
+        scalar[0]: 1
+        scalar[1]: 0
+        scalar[2]: 0
+        scalar[3]: 0
+        texture: {instanceID: 0}
+    - name: Main_hue
+      value:
+        scalar[0]: .5
+        scalar[1]: 0
+        scalar[2]: 0
+        scalar[3]: 0
+        texture: {instanceID: 0}
+    - name: Main_saturation
+      value:
+        scalar[0]: .5
+        scalar[1]: 0
+        scalar[2]: 0
+        scalar[3]: 0
+        texture: {instanceID: 0}
+    - name: Main_luminosity
+      value:
+        scalar[0]: .5
+        scalar[1]: 0
+        scalar[2]: 0
+        scalar[3]: 0
+        texture: {instanceID: 0}
+    materialInformation:
+      serializedVersion: 5
+      offset: {x: 0, y: 0}
+      scale: {x: 1, y: 1}
+      generateMipmaps: 1
+      generateAllOutputs: 0
+      animationUpdateRate: 42
+    materialProperties:
+      serializedVersion: 2
+      texEnvs:
+        data:
+          first:
+            name: _MainTex
+          second:
+            texture: {fileID: 1912602780, guid: b8955245452e55848993b0241272475a,
+              type: 3}
+            scale: {x: 1, y: 1}
+            offset: {x: 0, y: 0}
+        data:
+          first:
+            name: _BumpMap
+          second:
+            texture: {fileID: 673520621, guid: b8955245452e55848993b0241272475a, type: 3}
+            scale: {x: 1, y: 1}
+            offset: {x: 0, y: 0}
+        data:
+          first:
+            name: _Illum
+          second:
+            texture: {instanceID: 0}
+            scale: {x: 1, y: 1}
+            offset: {x: 0, y: 0}
+      floats:
+        data:
+          first:
+            name: _Shininess
+          second: .078125
+        data:
+          first:
+            name: _EmissionLM
+          second: 0
+      colors:
+        data:
+          first:
+            name: _Color
+          second: {r: 1, g: 1, b: 1, a: 1}
+        data:
+          first:
+            name: _SpecColor
+          second: {r: .5, g: .5, b: .5, a: 1}
+    textureParameters:
+    - name: Meteor2_Main_Normal
+      alphaSource: 0
+      filterMode: 1
+      aniso: 1
+      wrapMode: 0
+    - name: Meteor2_Main_Diffuse
+      alphaSource: 5
+      filterMode: 1
+      aniso: 1
+      wrapMode: 0
+    - name: Meteor2_Main_Specular
+      alphaSource: 0
+      filterMode: 1
+      aniso: 1
+      wrapMode: 0
+    textureAssignments: []
+    buildTargetSettings:
+    - serializedVersion: 2
+      buildTarget: 
+      textureWidth: 512
+      textureHeight: 512
+      textureFormat: 0
+      loadingBehavior: 1
+  deletedPrototypes: []
+  userData: 

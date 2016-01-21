@@ -1,0 +1,1 @@
+Level = 6, Selected State = 2. Relaxed:  More than enough time for all tasks. Active on the task less than 50% of the time.
