@@ -13,15 +13,20 @@ public class moveBehaviourScript : MonoBehaviour {
 	public float mySpeed = 2.5f;
 	public bool moving;
 	public bool no_autodraw = false;
+	public GUIText negScorePopUp;
+	public GameObject scoreSystem;
 	private Vector3 botLeftPoint;
 	private Vector3 topRightPoint;
 	private int minX;
 	private int minY;
 	private int maxX;
 	private int maxY;
+	private float amntOffScreen = 2f;
+	private float time;
 	
 	// Use this for initialization
 	void Start() {
+		scoreSystem = GameObject.Find("ScoreSystem");
 		collidedWithGameObjects = new ArrayList();
 		path = (pathMarker) MoveHelper.GetComponent("pathMarker");
 	    startPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);		
@@ -31,7 +36,6 @@ public class moveBehaviourScript : MonoBehaviour {
 		} else {
 			Vector3 target = path.dequeue();
 		  	MoveTo(target, mySpeed);
-		
 		}
 		
 		botLeftPoint  = Camera.main.ScreenToWorldPoint(new Vector3(0,0,10));
@@ -40,43 +44,55 @@ public class moveBehaviourScript : MonoBehaviour {
 		minY = (int) botLeftPoint.y;
 		maxX = (int) topRightPoint.x;
 		maxY = (int) topRightPoint.y;
+		time = Time.time;
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		//Check to see if the ship has left the screen
-		if(transform.position.x > maxX+3 || transform.position.y > maxY+3 ||
-		   transform.position.x < minX-3 || transform.position.y < minY-3) {
-
-
+		float maxXf = (float) maxX, maxYf = (float) maxY, minXf = (float) minX, minYf = (float) minY;
+		float currentTime = Time.time - time;
+		//currentTime fixes a bug that occurs from the ship being stuck after reaching a certain point on the border of the game view
+		//Notice that amntOffScreen is set to 2, or within the area of spawning (see SpawnSystem.cs)
+		if((transform.position.x >= (float)maxXf + amntOffScreen || transform.position.y >= (float)maxYf + amntOffScreen ||
+		   transform.position.x <= (float)minXf - amntOffScreen || transform.position.y <=(float)minYf - amntOffScreen) && currentTime > 1) {
+		
 			//Capture Relevant data for a ship leaving the screen (ship id and timestamp)
 			collisionHandler ch = (collisionHandler) gameObject.GetComponent("collisionHandler");
 			GameObject data = GameObject.FindGameObjectWithTag ("GameData");
 			gameData gd = (gameData)data.GetComponent ("gameData");
 			
-			string fileName;
-			bool goodToWrite = true;
-			if (gd.scriptedInstance) {
-				goodToWrite = false;
-				fileName = "Response_" + gd.instanceNum + ".txt";
-			} else {
-				fileName = "Level_" + gd.gameLevel + "_Data.txt";
-			}
+			//activate only if the parameters specify to do so.
+			//if (gd.pram_list.borderControlSwitch == 1)
+			//{
+//				path = (pathMarker) MoveHelper.GetComponent("pathMarker");
+//				//if player threw off screen then subtract the points of the ship
+//				//Debug.Log (path.pathStarted);
+//				if (path.hasPath ())
+//				{
+					scoreSystem.BroadcastMessage("addPoints",-100);
+//					negScorePopUp.text = "-100";
+//					Vector3 screenPos = Camera.main.WorldToViewportPoint (gameObject.transform.position);
+//					Instantiate (negScorePopUp, screenPos, Quaternion.identity);
+				//}
+			//}
 			
-			if (goodToWrite) {
-				//Capture relevant data about the present game space
-				using (StreamWriter streamer = new StreamWriter(fileName, gd.writtenYet)) {
-					streamer.WriteLine ("Screen:" + ch.shipID + "," + Time.timeSinceLevelLoad.ToString ("f2"));
-					streamer.Close ();
-				}
+			string fileName = gd.fileName;//gd.unique_id + "Level_" + gd.gameLevel + "_Data.txt";
+			//Capture relevant data about the present game space
+			using (StreamWriter streamer = new StreamWriter(fileName, gd.writtenYet)) {
+				string timeWrite = System.DateTime.Now.Hour*60*60 + System.DateTime.Now.Minute*60 + System.DateTime.Now.Second + "." + System.DateTime.Now.Millisecond;
+				streamer.WriteLine ("screenExit," + ch.shipID + "," + timeWrite);
+				streamer.Close ();
 			}
 
 			Destroy(gameObject);
-
+			//Records the ship being destroyed
+			try { gd.pram_list.numOfShips -= 1; } catch (System.NullReferenceException) {}
+			
 		}
 		if(!path.hasPath()) {
 			return;
-		}   
+		} 
 		if(path.pathStarted && path.hasPath() && !path.mouseIsDown) {
 			path.pathStarted = false;
 			Vector3 nextPoint = path.dequeue();
@@ -104,20 +120,7 @@ public class moveBehaviourScript : MonoBehaviour {
 	void stopAni() {
 		moving = false;
 		
-//		//Check to see if the ship has left the screen
-//		if(transform.position.x > maxX || transform.position.y > maxY ||
-//		   transform.position.x < minX || transform.position.y < minY) {
-//			Destroy(gameObject);
-//			print ("Destroy");
-//			print (transform.position.x);
-//			if(!path.hasPath ()){
-//				print ("No Path");
-//			}
-//		}
-		
 		if(!path.hasPath()) {
-
-
 			//Just reached the end of its path
 			if(!path.mouseIsDown) {	
 				MoveTo(dest, mySpeed);

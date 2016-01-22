@@ -66,7 +66,7 @@ public class SU_SpaceParticles : MonoBehaviour {
 	void Start () {
 		// Cache transform and particle system to improve performance
 		_cacheTransform = transform;
-		_cacheParticleSystem = GetComponent<ParticleSystem>();
+		_cacheParticleSystem = particleSystem;
 		// Calculate the actual spawn and fade distances
 		_distanceToSpawn = range * distanceSpawn;
 		_distanceToFade = range * distanceFade;
@@ -89,16 +89,16 @@ public class SU_SpaceParticles : MonoBehaviour {
 				Random.Range(minParticleDriftSpeed, maxParticleDriftSpeed) * driftSpeedMultiplier);			
 			_newParticle.velocity = _velocity;						
 			_newParticle.size = Random.Range(minParticleSize, maxParticleSize) * sizeMultiplier;								
-			GetComponent<ParticleSystem>().Emit(1);
+			particleSystem.Emit(1);
 			
 		}			
 	}
 	
 	void Update () {
-		int _numParticles = GetComponent<ParticleSystem>().particleCount;		
+		int _numParticles = particleSystem.particleCount;		
 		// Get the particles from the particle system
 		ParticleSystem.Particle[] _particles = new ParticleSystem.Particle[_numParticles];
-		GetComponent<ParticleSystem>().GetParticles(_particles);
+		particleSystem.GetParticles(_particles);
 		
 		// Iterate through the particles and relocation (spawn) and fading
 		for (int i = 0; i < _particles.Length; i++) {			
@@ -136,6 +136,6 @@ public class SU_SpaceParticles : MonoBehaviour {
        	}        
 		
 		// Set the particles according to above modifications
-    	GetComponent<ParticleSystem>().SetParticles(_particles, _numParticles);    	
+    	particleSystem.SetParticles(_particles, _numParticles);    	
 	}
 }

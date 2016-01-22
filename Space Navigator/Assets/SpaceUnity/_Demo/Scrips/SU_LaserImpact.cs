@@ -27,7 +27,7 @@ public class SU_LaserImpact : MonoBehaviour {
 			// Cache the transform to improve performance
 			_cacheLight = transform.Find("light");
 			// Find the child light and set intensity to 1.0
-			_cacheLight.GetComponent<Light>().intensity = 1.0f;
+			_cacheLight.light.intensity = 1.0f;
 			// Move the transform 5 units out so it's not spawn at impact point of the collider/mesh it just hit
 			// which will light up the object better.
 			_cacheLight.transform.Translate(Vector3.up*5, Space.Self);
@@ -42,7 +42,7 @@ public class SU_LaserImpact : MonoBehaviour {
 		// If the light exists...
 		if (_cacheLight != null) {
 			// Set the intensity depending on the number of particles visible
-			_cacheLight.GetComponent<Light>().intensity = (float) (transform.GetComponent<ParticleEmitter>().particleCount / 50.0f);
+			_cacheLight.light.intensity = (float) (transform.particleEmitter.particleCount / 50.0f);
 		}
 	}
 }

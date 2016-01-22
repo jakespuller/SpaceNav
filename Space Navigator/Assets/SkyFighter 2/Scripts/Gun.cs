@@ -37,7 +37,7 @@ public RaycastHit Hit;
 		  		RayShoot();
 				FireTime = PhaserCooldown;
 				Transform phasers= Instantiate(PhaserPrefab, transform.position, transform.rotation)as Transform;		
-				phasers.GetComponent<Rigidbody>().AddForce(transform.forward * 1000);
+				phasers.rigidbody.AddForce(transform.forward * 1000);
 			}
 		}
 	}
@@ -58,6 +58,6 @@ public RaycastHit Hit;
 	
 	void  PlayPhaserAudio ()
 	{
-		GetComponent<AudioSource>().PlayOneShot (PhaserAudio);
+		audio.PlayOneShot (PhaserAudio);
 	}
 }

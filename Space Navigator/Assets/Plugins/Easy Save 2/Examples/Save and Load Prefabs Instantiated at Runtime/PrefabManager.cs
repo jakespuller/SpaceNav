@@ -25,7 +25,7 @@ public class PrefabManager : MonoBehaviour
 	 */
 	void Start () 
 	{
-		Debug.Log (gameObject.GetComponent<Renderer>().material.shader.name);
+		Debug.Log (gameObject.renderer.material.shader.name);
 		
 		// If there are saved prefabs to load, load them.
 		if(ES2.Exists(filename))

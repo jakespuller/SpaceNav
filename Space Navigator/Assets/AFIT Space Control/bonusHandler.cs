@@ -30,24 +30,13 @@ public class bonusHandler : MonoBehaviour
 						collisionHandler ch = (collisionHandler)col.GetComponent ("collisionHandler");
 						GameObject data = GameObject.FindGameObjectWithTag ("GameData");
 						gameData gd = (gameData)data.GetComponent ("gameData");
-			
-						string fileName;
-						bool goodToWrite = true;
-						if (gd.scriptedInstance) {
-								goodToWrite = false;
-								fileName = "Response_" + gd.instanceNum + ".txt";
-						} else {
-								fileName = "Level_" + gd.gameLevel + "_Data.txt";
+						string fileName = gd.fileName;//gd.unique_id + "Level_" + gd.gameLevel + "_Data.txt";
+						//Capture relevant data about the present game space
+						using (StreamWriter streamer = new StreamWriter(fileName, gd.writtenYet)) {
+								string time = System.DateTime.Now.Hour*60*60 + System.DateTime.Now.Minute*60 + System.DateTime.Now.Second + "." + System.DateTime.Now.Millisecond;
+								streamer.WriteLine ("Bonus," + ch.shipID + "," + time + "\n");
+								streamer.Close ();
 						}
-			
-						if (goodToWrite) {
-								//Capture relevant data about the present game space
-								using (StreamWriter streamer = new StreamWriter(fileName, gd.writtenYet)) {
-										streamer.WriteLine ("Bonus:" + ch.shipID + "," + Time.timeSinceLevelLoad.ToString ("f2"));
-										streamer.Close ();
-								}
-						}
-			
 						Vector3 screenPos = Camera.main.WorldToViewportPoint (gameObject.transform.position);
 						Instantiate (posScorePopUp, screenPos, Quaternion.identity);
 						Destroy (gameObject);
@@ -56,10 +45,5 @@ public class bonusHandler : MonoBehaviour
 	
 		void OnTriggerExit (Collider col)
 		{
-		}
-	
-		// Update is called once per frame
-		void Update ()
-		{	
 		}
 }

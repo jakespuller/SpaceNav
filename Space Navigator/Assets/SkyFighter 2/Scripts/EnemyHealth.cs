@@ -84,11 +84,11 @@ public class EnemyHealth : MonoBehaviour
 			GameObject ScoreGameObject = GameObject.Find("SkyFighter 2"); // Finds the gameObject SkyFighter1
 			Score score = ScoreGameObject.GetComponent<Score>(); //Locates the script Score
 			score.score += points; //Tells Score to add points
-			GetComponent<AudioSource>().PlayOneShot(explode); // Plays audio for Explode if we get destoryed
+			audio.PlayOneShot(explode); // Plays audio for Explode if we get destoryed
 	}
 	void dead() //The Dead function
 	{
-		Enemy.GetComponent<Renderer>().enabled = false;  //Turns our rendere of so you can see us
+		Enemy.renderer.enabled = false;  //Turns our rendere of so you can see us
 		explosion.GetComponentInChildren<ParticleSystem>().Play(); //Turns on the particle system for the explosion
 		Destroy(Enemy, 1);//Destroys item when it is time
 		once = false;// Sets once to false

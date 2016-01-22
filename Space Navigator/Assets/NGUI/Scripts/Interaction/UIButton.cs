@@ -1,6 +1,6 @@
 //----------------------------------------------
 //            NGUI: Next-Gen UI kit
-// Copyright Â© 2011-2013 Tasharen Entertainment
+// Copyright © 2011-2013 Tasharen Entertainment
 //----------------------------------------------
 
 using UnityEngine;
@@ -39,12 +39,12 @@ public class UIButton : UIButtonColor
 	{
 		get
 		{
-			Collider col = GetComponent<Collider>();
+			Collider col = collider;
 			return col && col.enabled;
 		}
 		set
 		{
-			Collider col = GetComponent<Collider>();
+			Collider col = collider;
 			if (!col) return;
 
 			if (col.enabled != value)

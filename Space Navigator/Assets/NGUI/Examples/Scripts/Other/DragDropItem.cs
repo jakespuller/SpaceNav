@@ -1,6 +1,6 @@
 //----------------------------------------------
 //            NGUI: Next-Gen UI kit
-// Copyright Â© 2011-2012 Tasharen Entertainment
+// Copyright © 2011-2012 Tasharen Entertainment
 //----------------------------------------------
 
 using UnityEngine;
@@ -117,7 +117,7 @@ public class DragDropItem : MonoBehaviour
 			}
 
 			mIsDragging = false;
-			Collider col = GetComponent<Collider>();
+			Collider col = collider;
 			if (col != null) col.enabled = !isPressed;
 			if (!isPressed) Drop();
 		}

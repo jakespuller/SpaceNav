@@ -77,7 +77,7 @@ public class SU_SpaceSceneCamera : MonoBehaviour {
 		if (_transformCacheParentCamera != null) {
 			// Update the rotation of the space camera so the background rotates		
 			_transformCache.rotation = _transformCacheParentCamera.rotation;
-			if (inheritFOV) GetComponent<Camera>().fieldOfView = parentCamera.fieldOfView;
+			if (inheritFOV) camera.fieldOfView = parentCamera.fieldOfView;
 			
 			// Update the relative position of the space camera so you can travel in the space scene if necessary
 			// Note! You will fly out of bounds of the space scene if your relative speed is high unless you restrict the movement in your own code.

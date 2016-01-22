@@ -24,52 +24,52 @@ private int Range= 70; // The range of the array
 		
 		Vector3 facingDirection= transform.TransformDirection(Vector3.forward);
 		Debug.DrawRay(transform.position, facingDirection * Range, Color.blue);
-		scope.GetComponent<Renderer>().material.color = Color.blue;
+		scope.renderer.material.color = Color.blue;
 		
 		if (Physics.Raycast(transform.position, facingDirection,out hit, Range) && hit.transform.gameObject.tag == "Enemy") //Checks the tag
 		{
-			scope.GetComponent<Renderer>().material.color = Color.red; //Sets the scope color red
+			scope.renderer.material.color = Color.red; //Sets the scope color red
 		
    		}
 		
 		if (Physics.Raycast(transform.position, facingDirection,out hit, Range) && hit.transform.gameObject.tag == "Alliance") //Checks the tag
    		{
-            scope.GetComponent<Renderer>().material.color = Color.green; //Sets the scope color green
+            scope.renderer.material.color = Color.green; //Sets the scope color green
 
 	    }
 	    
 	    if (Physics.Raycast(transform.position, facingDirection,out hit, Range) && hit.transform.gameObject.tag == "Meteor") //Checks the tag
    		{
-            scope.GetComponent<Renderer>().material.color = Color.red; //Sets the scope color red
+            scope.renderer.material.color = Color.red; //Sets the scope color red
 		}
 
 	    
 	    if (Physics.Raycast(transform.position, facingDirection,out hit, Range) && hit.transform.gameObject.tag == "AllianceMothership") //Checks the tag
    		{
-            scope.GetComponent<Renderer>().material.color = Color.green; //Sets the scope color green
+            scope.renderer.material.color = Color.green; //Sets the scope color green
 	    }
 	    
 	    if (Physics.Raycast(transform.position, facingDirection,out hit, Range) && hit.transform.gameObject.tag == "EnemyMothership") //Checks the tag
    		{
-            scope.GetComponent<Renderer>().material.color = Color.red;  //Sets the scope color red
+            scope.renderer.material.color = Color.red;  //Sets the scope color red
 	    }
 	    
 	   if (Physics.Raycast(transform.position, facingDirection,out hit, Range) && hit.transform.gameObject.tag == "EnemySatellite") //Checks the tag
    		{
-            scope.GetComponent<Renderer>().material.color = Color.red;  //Sets the scope color red
+            scope.renderer.material.color = Color.red;  //Sets the scope color red
 
 		}
 	    if (Physics.Raycast(transform.position, facingDirection,out hit, Range) && hit.transform.gameObject.tag == "AllianceSatellite") //Checks the tag
    		{
-            scope.GetComponent<Renderer>().material.color = Color.green;  //Sets the scope color green
+            scope.renderer.material.color = Color.green;  //Sets the scope color green
 	    }
 	    if (Physics.Raycast(transform.position, facingDirection,out hit, Range) && hit.transform.gameObject.tag == "AlliancePlanet") //Checks the tag
    		{
-            scope.GetComponent<Renderer>().material.color = Color.green;//Sets the scope color green
+            scope.renderer.material.color = Color.green;//Sets the scope color green
 	    }
 	    if (Physics.Raycast(transform.position, facingDirection,out hit, Range) && hit.transform.gameObject.tag == "EnemyPlanet") //Checks the tag
    		{
-            scope.GetComponent<Renderer>().material.color = Color.red; //Sets the scope color red
+            scope.renderer.material.color = Color.red; //Sets the scope color red
 	    }
 	}
 }

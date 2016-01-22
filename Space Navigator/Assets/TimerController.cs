@@ -14,14 +14,45 @@ public class TimerController : MonoBehaviour
 		private ScoreController sc;
 		private float startTime;
 		private float timeLength;
-
+		private string systemStartTime;
+		private bool written;
+		private bool scoreWritten;
 		//Initialize the game time left counter
 		void Start ()
 		{
-				startTime = Time.time;
-				timeLength = timeLeft;
+			scoreWritten = false;
+			startTime = Time.time;
+			systemStartTime =  System.DateTime.Now.Hour*60*60 + System.DateTime.Now.Minute*60 + System.DateTime.Now.Second + "." + System.DateTime.Now.Millisecond;
+			timeLength = timeLeft;
+			//The following chunk of code uses input values from the XML file to set the time for the specified game.
+			GameObject data = GameObject.FindGameObjectWithTag ("GameData");
+			gameData gd = (gameData)data.GetComponent ("gameData");
+			sc = (ScoreController)GameObject.FindGameObjectWithTag ("ScoreSystem").GetComponent ("ScoreController");
+			try
+			{
+			if (gd.pram_list.practiceSession != 1)
+			{
+				if (gd.gameLevel <= gd.pram_list.numOfTrainingSessions) {
+					float temp = 0.0f;
+					gd.pram_list.trainingSessions [gd.gameLevel - 1].TryGetValue ("length", out temp);
+					temp = temp * 60;
+					timeLength = (float)temp;
+					gd.pram_list.numOfShips = 0f;
+				} else if (gd.gameLevel <= (gd.pram_list.numOfExperimentSessions + gd.pram_list.numOfTrainingSessions)) {
+					float temp = 0.0f;
+					int experiment_level = gd.gameLevel - gd.pram_list.numOfTrainingSessions;
+					gd.pram_list.experimentSessions[experiment_level - 1].TryGetValue ("length", out temp);
+					temp = temp * 60;
+					timeLength = (float)temp;
+					gd.pram_list.numOfShips = 0f;
+				}
+			} else {
+				timeLength = 60;
+			}
+			} catch (System.NullReferenceException){}
+			written = false;
 		}
-	
+		
 		// Update is called once per frame
 		void Update ()
 		{
@@ -32,77 +63,69 @@ public class TimerController : MonoBehaviour
 				GameObject data = GameObject.FindGameObjectWithTag ("GameData");
 				gameData gd = (gameData)data.GetComponent ("gameData");
 				sc = (ScoreController)GameObject.FindGameObjectWithTag ("ScoreSystem").GetComponent ("ScoreController");
-		
+				int warmup = 5;
+				try {
+					warmup = gd.pram_list.numOfTrainingSessions;
+				} catch (System.NullReferenceException) { warmup = 5; }
 				//Check to see if we are out of time
 				if (timeLeft <= 0.0f) {
-						
-
-					
 						//If we're out of time let them know, and pause so they can check score before loading the next screen
-						GetComponent<GUIText>().text = "You ran out of time";
-						//if (sc.score > gd.highScore) {
-//								gd.highScore = sc.score;
-//								using (StreamWriter streamer = new StreamWriter("HighScore.txt", gd.writtenYet)) {
-//										streamer.WriteLine (gd.highScore);
-//										streamer.Close ();
-//								}
-						//}	
-
+						guiText.text = "You ran out of time";
+						GameObject control = GameObject.FindGameObjectWithTag ("GameController");
+						spawnSystem ss = (spawnSystem)control.GetComponent ("spawnSystem");
+						if (ss.eyeTrackerOn > 0) {
+							ss.TCPconnection.closeStream();
+						}
+						//System Time Represented in Seconds
+						if (!written)
+						{
+							string systemEndTime = System.DateTime.Now.Hour*60*60 + System.DateTime.Now.Minute*60 + System.DateTime.Now.Second + "." + System.DateTime.Now.Millisecond;
+							string gameTimeInfo = gd.gameLevel+","+systemStartTime+","+systemEndTime+","+sc.score+",";
+							File.AppendAllText (gd.filePath+"gameLevelInfo.txt", gameTimeInfo);
+							written = true;
+							gd.writtenYet = true;
+						}
 						//Load the next level depending on if it is a scripted instance or regular game
 						if (popup == false) {
-								if (!gd.scriptedInstance) {
-//										//Create a holder file to know we finished this level
-//										string file_name = "L" + gd.gameLevel + ".txt";
-//										using (StreamWriter streamer = new StreamWriter(file_name, gd.writtenYet)) {
-//												streamer.WriteLine ("Done");
-//												streamer.Close ();
-//										}
-
-										//Go back to the main menu
-										if (gd.gameLevel <= 5) {
-												StartCoroutine (pauseAndLoadNewLevel (3, 0));
-										} else {
-												StartCoroutine (pauseAndLoadNewLevel (3, 2));
-
-										}
-								} else {
 										//Go back to the scripted menu
-										StartCoroutine (pauseAndLoadNewLevel (3, 2));
-								}
+										if (gd.pram_list.practiceSession == 1)
+										{
+											gd.pram_list.numPracticeGames += 1;
+											StartCoroutine (pauseAndLoadNewLevel(3, "GameStart"));
+										} else {
+											StartCoroutine (pauseAndLoadNewLevel (3, "QuestionScene"));
+										}
 						}
 						popup = true;
 
 				} else {
-						if (gd.gameLevel <= 5) {
+						if (gd.gameLevel <= warmup) {
 								//if we haven't run out of time yet, update the time on the screen
 								if (timeLeft % 60 < 10) {
-										GetComponent<GUIText>().text = "High Score: " + gd.highScore + "\nInstance: " + gd.instanceNum + "\nTime: " + Math.Floor (timeLeft / 60) + ":0" + (int)timeLeft % 60;
+										guiText.text = "High Score: " + gd.highScore + "\nInstance: " + gd.instanceNum + "\nTime: " + Math.Floor (timeLeft / 60) + ":0" + (int)timeLeft % 60;
 								} else {
-										GetComponent<GUIText>().text = "High Score: " + gd.highScore + "\nInstance: " + gd.instanceNum + "\nTime: " + Math.Floor (timeLeft / 60) + ":" + (int)timeLeft % 60;
+										guiText.text = "High Score: " + gd.highScore + "\nInstance: " + gd.instanceNum + "\nTime: " + Math.Floor (timeLeft / 60) + ":" + (int)timeLeft % 60;
 								}
 						} else {
 
 								string level = "";
 								switch (gd.automation_level) {
 								case 0:
-										level = "A";
+										level = "OFF";
 										break;
 								case 1:
-										level = "B";
+										level = "ON";
 										break;
 								case 2:
-										level = "C";
-										break;
-								case 3:
-										level = "D";
+										level = "ON";
 										break;
 								}
 				
 								//if we haven't run out of time yet, update the time on the screen
 								if (timeLeft % 60 < 10) {
-										GetComponent<GUIText>().text = "High Score: " + gd.highScore + "\nAutomation Setting: " + level + "\nTime: " + Math.Floor (timeLeft / 60) + ":0" + (int)timeLeft % 60;
+										guiText.text = "High Score: " + gd.highScore + "\nAutomation: " + level + "\nTime: " + Math.Floor (timeLeft / 60) + ":0" + (int)timeLeft % 60;
 								} else {
-										GetComponent<GUIText>().text = "High Score: " + gd.highScore + "\nAutomation Setting: " + level + "\nTime: " + Math.Floor (timeLeft / 60) + ":" + (int)timeLeft % 60;
+										guiText.text = "High Score: " + gd.highScore + "\nAutomation: " + level + "\nTime: " + Math.Floor (timeLeft / 60) + ":" + (int)timeLeft % 60;
 								}
 						}
 				}
@@ -133,17 +156,19 @@ public class TimerController : MonoBehaviour
 		}
 	
 		//Use a yield/corouting method to wait a few seconds before loading the nex level
-		public IEnumerator pauseAndLoadNewLevel (float numSecs, int level)
+		public IEnumerator pauseAndLoadNewLevel (float numSecs, string level)
 		{
 				Time.timeScale = 0.0f;
 				float pauseEndTime = Time.realtimeSinceStartup + numSecs;
-
-			//Gather objects needed to check on high scores
+				//Gather objects needed to check on high scores
 				GameObject data = GameObject.FindGameObjectWithTag ("GameData");
 				gameData gd = (gameData)data.GetComponent ("gameData");
-				using (StreamWriter streamer = new StreamWriter("HighScore.txt", gd.writtenYet)) {
-			streamer.WriteLine (sc.score);
-			streamer.Close ();
+				if (!scoreWritten) {
+					using (StreamWriter streamer = new StreamWriter("HighScore.txt", gd.writtenYet)) {
+					streamer.WriteLine (sc.score);
+					streamer.Close ();
+					scoreWritten = true;
+				}
 		}
 
 		while (Time.realtimeSinceStartup < pauseEndTime) {
@@ -154,27 +179,18 @@ public class TimerController : MonoBehaviour
 		}
 	
 		//Load the game to the indicated level
-		IEnumerator loadLevel (int level)
+		IEnumerator loadLevel (string level)
 		{
 				yield return 0;
-
 				//Send a round end string to the server so we know to save the player model, etc.
 				GameObject control = GameObject.FindGameObjectWithTag ("GameController");
-				spawnSystem ss = (spawnSystem)control.GetComponent ("spawnSystem");
-				ss.UDPConnection.sendString ("end");
-
 				GameObject data = GameObject.FindGameObjectWithTag ("GameData");
 				gameData gd = (gameData)data.GetComponent ("gameData");
-				if (gd.scriptedInstance) {
-						if (gd.correctShip) {
-								gd.instanceNum++;
-						} else {
-								gd.correctShip = true;
-						}
-			
-				} else {
-						gd.gameLevel++;
+				spawnSystem ss = (spawnSystem)control.GetComponent ("spawnSystem");
+				if (gd.pram_list.eyeTrackerOn > 0) {
+					ss.TCPconnection.closeStream();
 				}
+				gd.gameLevel++;
 				Application.LoadLevel (level);
 		}
 }

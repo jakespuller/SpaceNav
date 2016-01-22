@@ -6,12 +6,6 @@ public class gameController : MonoBehaviour {
 	
 	public GameObject settingsPanel;
 	bool moving = false;
-	
-	// Use this for initialization
-	void Start() {}
-	
-	// Update is called once per frame
-	void Update() {}
 
 	//Move the GameObject to the given point at the given speed
 	void MoveThisTo(GameObject go, Vector3 pointB, float speed) {
@@ -32,8 +26,4 @@ public class gameController : MonoBehaviour {
 		//animation stopped
 		moving = true;
 	}
-	
-	
-	
-	
 }

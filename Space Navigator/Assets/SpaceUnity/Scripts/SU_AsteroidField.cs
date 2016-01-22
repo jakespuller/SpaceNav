@@ -207,29 +207,29 @@ public class SU_AsteroidField : MonoBehaviour {
 						// ...and if the bool flag has been not been set...
 						if (!_asteroidsFading[i]) {
 							// Change the material of the asteroid to a transparent material that supports alpha fading
-							_asteroid.GetComponent<Renderer>().sharedMaterial = (Material) _materialsTransparent[_asteroidsMaterials[i]];
+							_asteroid.renderer.sharedMaterial = (Material) _materialsTransparent[_asteroidsMaterials[i]];
 							// Set the fading flag to true (we compare a Bool list instead of costly checking the material in each frame
 							_asteroidsFading[i] = true;
 						}
 						// Cache the color of the material
 						
-						Color _col = _asteroid.GetComponent<Renderer>().material.color;
+						Color _col = _asteroid.renderer.material.color;
 						// Calculate the new alpha value between _distanceToFade (1.0) and _distanceToSpawn (0.0)
 						float _alpha = Mathf.Clamp01(1.0f - ((_distance - _distanceToFade) / (_distanceToSpawn - _distanceToFade)));
 						// Set the same color with the new alpha value to the asteroid
-						_asteroid.GetComponent<Renderer>().material.color = new Color(_col.r, _col.g, _col.b, _alpha );
+						_asteroid.renderer.material.color = new Color(_col.r, _col.g, _col.b, _alpha );
 					} else {
 						// The asteroid is within range, and if the fading flag is still set...
 						if (_asteroidsFading[i]) {					
 							// Change the material back to the original non-transparent material
-							_asteroid.GetComponent<Renderer>().material = (Material) _asteroidsMaterials[i];
+							_asteroid.renderer.material = (Material) _asteroidsMaterials[i];
 							// Set the fading falg to false to prevent material changes each frame
 							_asteroidsFading[i] = false;
 						}
 					}
 				}
 			} else {
-				// Asteroid transform must have been been destroyed for some reason (from another scriÃ¥t?), remove it from the lists
+				// Asteroid transform must have been been destroyed for some reason (from another scriåt?), remove it from the lists
 				_asteroids.RemoveAt(i);
 				_asteroidsMaterials.RemoveAt(i);
 				_asteroidsFading.RemoveAt(i);
@@ -274,23 +274,23 @@ public class SU_AsteroidField : MonoBehaviour {
 			// Set a random material of the asteroid based on the weighted probabilty list
 			switch (WeightedRandom(_materialList)) {
 			case "VeryCommon":
-				_newAsteroid.GetComponent<Renderer>().sharedMaterial = materialVeryCommon[Random.Range(0, materialVeryCommon.Length)];
+				_newAsteroid.renderer.sharedMaterial = materialVeryCommon[Random.Range(0, materialVeryCommon.Length)];
 				break;
 			case "Common":
-				_newAsteroid.GetComponent<Renderer>().sharedMaterial = materialCommon[Random.Range(0, materialCommon.Length)];
+				_newAsteroid.renderer.sharedMaterial = materialCommon[Random.Range(0, materialCommon.Length)];
 				break;
 			case "Rare":
-				_newAsteroid.GetComponent<Renderer>().sharedMaterial= materialRare[Random.Range(0, materialRare.Length)];
+				_newAsteroid.renderer.sharedMaterial= materialRare[Random.Range(0, materialRare.Length)];
 				break;
 			case "VeryRare":
-				_newAsteroid.GetComponent<Renderer>().sharedMaterial = materialVeryRare[Random.Range(0, materialVeryRare.Length)];
+				_newAsteroid.renderer.sharedMaterial = materialVeryRare[Random.Range(0, materialVeryRare.Length)];
 				break;
 			}
 			
 			// Add the asteroid to a list used to keep track of them
 			_asteroids.Add(_newAsteroid);
 			// A list to store which material each asteroid has
-			_asteroidsMaterials.Add(_newAsteroid.GetComponent<Renderer>().sharedMaterial);
+			_asteroidsMaterials.Add(_newAsteroid.renderer.sharedMaterial);
 			// Improve performance by having a list of bool values whether or not asteroids are fading
 			_asteroidsFading.Add(false);
 			
@@ -299,7 +299,7 @@ public class SU_AsteroidField : MonoBehaviour {
 				// Set the mesh of the asteroid based on chosen polycount
 				_newAsteroid.GetComponent<SU_Asteroid>().SetPolyCount(polyCount);
 				// If the asteroid has a collider...
-				if (_newAsteroid.GetComponent<Collider>() != null) {
+				if (_newAsteroid.collider != null) {
 					_newAsteroid.GetComponent<SU_Asteroid>().SetPolyCount(polyCountCollider, true);
 				}
 			}
@@ -314,13 +314,13 @@ public class SU_AsteroidField : MonoBehaviour {
 			if (isRigidbody) {
 				// RIGIDBODY ASTEROIDS
 				// If the asteroid prefab has a rigidbody...
-				if (_newAsteroid.GetComponent<Rigidbody>() != null) {
+				if (_newAsteroid.rigidbody != null) {
 					// Set the mass to mass specified in AsteroidField mutiplied by scale
-					_newAsteroid.GetComponent<Rigidbody>().mass = mass * _newScale;
+					_newAsteroid.rigidbody.mass = mass * _newScale;
 					// Set the velocity (speed) of the rigidbody to within the min/max velocity range multiplier by velocityMultiplier
-					_newAsteroid.GetComponent<Rigidbody>().velocity = _newAsteroid.transform.forward * Random.Range(minAsteroidVelocity, maxAsteroidVelocity) * velocityMultiplier;
+					_newAsteroid.rigidbody.velocity = _newAsteroid.transform.forward * Random.Range(minAsteroidVelocity, maxAsteroidVelocity) * velocityMultiplier;
 					// Set the angular velocity (rotational speed) of the rigidbody to within the min/max velocity range multiplier by velocityMultiplier
-					_newAsteroid.GetComponent<Rigidbody>().angularVelocity = new Vector3(Random.Range(0.0f,1.0f), Random.Range(0.0f,1.0f), Random.Range(0.0f,1.0f)) * Random.Range(minAsteroidAngularVelocity, maxAsteroidAngularVelocity) * angularVelocityMultiplier;
+					_newAsteroid.rigidbody.angularVelocity = new Vector3(Random.Range(0.0f,1.0f), Random.Range(0.0f,1.0f), Random.Range(0.0f,1.0f)) * Random.Range(minAsteroidAngularVelocity, maxAsteroidAngularVelocity) * angularVelocityMultiplier;
 				} else {
 					Debug.LogWarning("AsteroidField is set to spawn rigidbody asterodids but one or more asteroid prefabs do not have rigidbody component attached.");
 				}
@@ -328,9 +328,9 @@ public class SU_AsteroidField : MonoBehaviour {
 				// NON-RIGIDBODY ASTEROIDS
 				
 				// If the asteroid prefab has a rigidbody...
-				if (_newAsteroid.GetComponent<Rigidbody>() != null) {
+				if (_newAsteroid.rigidbody != null) {
 					// Destroy the rigidbody since the asteroid field is spawning non-rigidbody asteroids
-					Destroy(_newAsteroid.GetComponent<Rigidbody>());
+					Destroy(_newAsteroid.rigidbody);
 				}
 				// If the asteroid has the Asteroid script attached to it...
 				if (_newAsteroid.GetComponent<SU_Asteroid>() != null) {

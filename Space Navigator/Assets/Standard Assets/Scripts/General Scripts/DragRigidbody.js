@@ -28,8 +28,8 @@ function Update ()
 	if (!springJoint)
 	{
 		var go = new GameObject("Rigidbody dragger");
-		var body : Rigidbody = go.AddComponent.<Rigidbody>() as Rigidbody;
-		springJoint = go.AddComponent.<SpringJoint>();
+		var body : Rigidbody = go.AddComponent ("Rigidbody") as Rigidbody;
+		springJoint = go.AddComponent ("SpringJoint");
 		body.isKinematic = true;
 	}
 	
@@ -76,8 +76,8 @@ function DragObject (distance : float)
 
 function FindCamera ()
 {
-	if (GetComponent.<Camera>())
-		return GetComponent.<Camera>();
+	if (camera)
+		return camera;
 	else
 		return Camera.main;
 }

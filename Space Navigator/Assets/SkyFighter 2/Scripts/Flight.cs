@@ -26,7 +26,7 @@ public class Flight : MonoBehaviour
 		
 		if (Input.GetKey ("space")) //Set the space key as your booster forward,  you can change this as you would like
 		{
-    		GetComponent<Rigidbody>().AddRelativeForce (Vector3.forward * flightSpeed);
+    		rigidbody.AddRelativeForce (Vector3.forward * flightSpeed);
 			varGameObject = GameObject.Find("Stars");
             varGameObject.GetComponent<ParticleSystem>().startSpeed =50;
 			varGameObject.GetComponent<ParticleSystem>().emissionRate =120;
@@ -34,17 +34,17 @@ public class Flight : MonoBehaviour
 		
 		if (Input.GetKey ("x")) //Sets the x key as your reverse key,  you can change this as you would like
 		{
-			GetComponent<Rigidbody>().AddRelativeForce (Vector3.forward * reverseSpeed);
+			rigidbody.AddRelativeForce (Vector3.forward * reverseSpeed);
 		}
 
 		if (Input.GetKey ("a")) //Sets the a as your turn left key,  you can change this as you would like
 		{
-			GetComponent<Rigidbody>().AddRelativeTorque (0, -500, 0);
+			rigidbody.AddRelativeTorque (0, -500, 0);
 		}
 
 		if (Input.GetKey ("d")) //Sets the a as your turn right key,  you can change this as you would like
 		{
-			GetComponent<Rigidbody>().AddRelativeTorque (0, 500, 0);
+			rigidbody.AddRelativeTorque (0, 500, 0);
 		}
 	
 			float rotation = Input.GetAxis ("Horizontal") * rotationSpeed;//Tilts the ship
@@ -58,12 +58,12 @@ public class Flight : MonoBehaviour
 	
 		if (Input.GetKey ("s")) //Sets s as your key to tip the nose up, you can change this as your would like
 		{
-			GetComponent<Rigidbody>().AddRelativeTorque (-400, 0, 0);
+			rigidbody.AddRelativeTorque (-400, 0, 0);
 		}
 		
 		if (Input.GetKey ("w")) //Sets w as your key to tip the nose down, you can change this as your would like
 		{
-			GetComponent<Rigidbody>().AddRelativeTorque (400, 0, 0);
+			rigidbody.AddRelativeTorque (400, 0, 0);
 		}
 	}
 }

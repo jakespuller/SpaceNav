@@ -73,18 +73,18 @@ public class Shield : MonoBehaviour {
 		
 		if(curShieldHealth>40)
 		{
-			shield.GetComponent<Renderer>().material.shader = Shader.Find("Rim");//Finds where the shield color changer is.
-			shield.GetComponent<Renderer>().material.SetColor("_RimColor",new Color(0,0,255,255));//Sets the color of the shield.
+			shield.renderer.material.shader = Shader.Find("Rim");//Finds where the shield color changer is.
+			shield.renderer.material.SetColor("_RimColor",new Color(0,0,255,255));//Sets the color of the shield.
 		}
 		if(curShieldHealth <=50)//If the shields healht is less then 76 set shield color to this.
 		{
-			shield.GetComponent<Renderer>().material.shader = Shader.Find("Rim");//Finds where the shield color changer is.
-			shield.GetComponent<Renderer>().material.SetColor("_RimColor",new Color(255,112,0,255));//Sets the color of the shield.
+			shield.renderer.material.shader = Shader.Find("Rim");//Finds where the shield color changer is.
+			shield.renderer.material.SetColor("_RimColor",new Color(255,112,0,255));//Sets the color of the shield.
 		}
 		 if(curShieldHealth <=35)//If the shields healht is less then 43 set shield color to this.
 		{
-			shield.GetComponent<Renderer>().material.shader = Shader.Find("Rim");//Finds where the shield color changer is.
-			shield.GetComponent<Renderer>().material.SetColor("_RimColor", new Color(255,0,0,255));//Sets the color of the shield.
+			shield.renderer.material.shader = Shader.Find("Rim");//Finds where the shield color changer is.
+			shield.renderer.material.SetColor("_RimColor", new Color(255,0,0,255));//Sets the color of the shield.
 		}
 	}
 	void OnCollisionEnter(Collision collision)//Checks for collision.

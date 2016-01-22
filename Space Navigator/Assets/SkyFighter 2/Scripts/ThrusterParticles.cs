@@ -35,7 +35,7 @@ void  Update (){
 		}
 		else
 		{
-			GetComponent<AudioSource>().Play();
+			audio.Play();
 			engine.SetActive (false);//Turns off the particle system
 			engine2.SetActive (false);//Turns off the particle system
 			engine3.SetActive (false);//Turns off the particle system

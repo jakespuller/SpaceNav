@@ -11,8 +11,6 @@ public class ScriptMenu : MonoBehaviour {
 		
 	// Use this for initialization
 	void Start() {
-		
-
 		//Create a new game data object in order to capture data across Unity levels
 		GameObject data = GameObject.FindGameObjectWithTag("GameData");
 		if (data == null) {
@@ -30,10 +28,6 @@ public class ScriptMenu : MonoBehaviour {
 			}
 		}
 		gd.instanceNum = maxComplete + 1;		
-	}
-		
-	// Update is called once per frame
-	void Update () {
 	}
 	
 	void OnGUI() {

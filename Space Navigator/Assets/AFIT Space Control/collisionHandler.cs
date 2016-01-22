@@ -13,7 +13,13 @@ public class collisionHandler : MonoBehaviour {
 	public float drawStartTime;
 	public int shipID;
 	private ShipState myState;
-	 
+	private Vector3 botLeftPoint;
+	private Vector3 topRightPoint;
+	private float minX;
+	private float minY;
+	private float maxX;
+	private float maxY;
+	private string fileName;
 	// Use this for initialization
 	void Start() {
 		scoreSystem = GameObject.Find("ScoreSystem");
@@ -24,39 +30,59 @@ public class collisionHandler : MonoBehaviour {
 		
 		//Give ship an ID and capture spawning event
 		shipID = gd.nextShipIDNum;
-		string fileName = "";
-		if(!gd.scriptedInstance) {
-			fileName = "Level_" + gd.gameLevel + "_Data.txt";
-			using(StreamWriter streamer = new StreamWriter(fileName, gd.writtenYet)) {
-				streamer.WriteLine("Spawn:"+shipID + "," + Time.timeSinceLevelLoad.ToString("f2"));
+
+		fileName = gd.fileName;//gd.unique_id + "Level_" + gd.gameLevel + "_Data.txt";
+		using(StreamWriter streamer = new StreamWriter(fileName, gd.writtenYet)) {
+			string time = System.DateTime.Now.Hour*60*60 + System.DateTime.Now.Minute*60 + System.DateTime.Now.Second + "." + System.DateTime.Now.Millisecond;
+			streamer.WriteLine("Spawn,"+shipID + "," + time);
+			streamer.Close();
+		}
+		gd.writtenYet = true;
+		gd.nextShipIDNum++;
+		myState = ShipState.flying;
+		botLeftPoint  = Camera.main.ScreenToWorldPoint(new Vector3(0,0,10));
+		topRightPoint  = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 10));
+		maxX = topRightPoint.x;
+		maxY = topRightPoint.y;
+	}
+
+	//Handles the collision of a ship object or ship objects
+	IEnumerator OnTriggerEnter(Collider col) {
+		GameObject data = GameObject.FindGameObjectWithTag("GameData");
+		gameData gd2 = (gameData)data.GetComponent("gameData");
+		if (col.tag == "planet" || (col.tag == "ship" && myState == ShipState.flying))
+		{
+			if(col.tag=="planet") {
+				string assignedPlanet=getMyPlanetName();
+				GameObject myplanet = GameObject.Find (assignedPlanet);
+				if(myplanet.name == col.gameObject.name && myState == ShipState.flying) {
+					myState = ShipState.landed;
+					planetCollisionHandler(col);			
+					yield return new WaitForSeconds (.4f);
+					Destroy (gameObject);
+					try
+					{
+						gd2.pram_list.numOfShips -= 1.0f;
+					} catch (System.NullReferenceException) {}
+				}
+			}
+			if(col.tag=="ship" && myState == ShipState.flying)	{
+				myState = ShipState.exploded;
+				shipCollisionHandler(col);
+		  		yield return new WaitForSeconds (.4f);
+				Destroy (gameObject);
+				try
+				{
+					gd2.pram_list.numOfShips -= 1.0f;
+				} catch (System.NullReferenceException) {}
+			}
+			//string fileName = gd2.unique_id + "Level_" + gd2.gameLevel + "_Data.txt";
+			using(StreamWriter streamer = new StreamWriter(fileName, gd2.writtenYet)) {
+				string time = System.DateTime.Now.Hour*60*60 + System.DateTime.Now.Minute*60 + System.DateTime.Now.Second + "." + System.DateTime.Now.Millisecond;
+				streamer.WriteLine("NumOfShips,"+gd2.pram_list.numOfShips+","+time);
 				streamer.Close();
 			}
-		}
-		gd.nextShipIDNum++;
-		
-		myState = ShipState.flying;
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	}
-	
-	IEnumerator OnTriggerEnter(Collider col) {
-		if(col.tag=="planet") {
-			string assignedPlanet=getMyPlanetName();
-			GameObject myplanet = GameObject.Find (assignedPlanet);
-			if(myplanet.name == col.gameObject.name && myState == ShipState.flying) {
-				myState = ShipState.landed;
-				planetCollisionHandler(col);			
-				yield return new WaitForSeconds (.4f);
-				Destroy (gameObject);
-			}
-		}
-		if(col.tag=="ship" && myState == ShipState.flying)	{
-			myState = ShipState.exploded;
-			shipCollisionHandler(col);
-	  		yield return new WaitForSeconds (.4f);
-			Destroy (gameObject);
+			gd2.writtenYet = true;
 		}
 	}
 	
@@ -67,23 +93,14 @@ public class collisionHandler : MonoBehaviour {
 		collisionHandler ch = (collisionHandler) gameObject.GetComponent("collisionHandler");
 		GameObject data = GameObject.FindGameObjectWithTag("GameData");
 		gameData gd = (gameData) data.GetComponent("gameData");
-		
-		string fileName;
-		bool goodToWrite = true;
-		if(gd.scriptedInstance) {
-			goodToWrite = false;
-				fileName = "Response_" + gd.instanceNum + ".txt";
-		} else {
-			fileName = "Level_" + gd.gameLevel + "_Data.txt";
+		//string fileName = gd.fileName;//gd.unique_id + "Level_" + gd.gameLevel + "_Data.txt";
+		//Capture relevant data about the present game space
+		using(StreamWriter streamer = new StreamWriter(fileName, gd.writtenYet)) {
+			string time = System.DateTime.Now.Hour*60*60 + System.DateTime.Now.Minute*60 + System.DateTime.Now.Second + "." + System.DateTime.Now.Millisecond;
+			streamer.WriteLine("Collision,"+ch.shipID + "," + time + "," + (ch.transform.position.x/(maxX*2f) + .5f)*gd.screen_width+","+(ch.transform.position.y/(maxY*2f) + .5f)*gd.screen_height);
+			streamer.Close();
 		}
-		
-		if(goodToWrite) {
-			//Capture relevant data about the present game space
-			using(StreamWriter streamer = new StreamWriter(fileName, gd.writtenYet)) {
-				streamer.WriteLine("Collision:"+ch.shipID + "," + Time.timeSinceLevelLoad.ToString("f2"));
-				streamer.Close();
-			}
-		}
+		gd.writtenYet = true;
 	}
 	
 	void planetCollisionHandler(Collider col) {
@@ -99,22 +116,14 @@ public class collisionHandler : MonoBehaviour {
 		GameObject data = GameObject.FindGameObjectWithTag("GameData");
 		gameData gd = (gameData) data.GetComponent("gameData");
 		
-		string fileName;
-		bool goodToWrite = true;
-		if(gd.scriptedInstance) {
-			goodToWrite = false;
-				fileName = "Response_" + gd.instanceNum + ".txt";
-		} else {
-			fileName = "Level_" + gd.gameLevel + "_Data.txt";
+		//string fileName = gd.unique_id + "Level_" + gd.gameLevel + "_Data.txt";
+		//Capture relevant data about the present game space
+		using(StreamWriter streamer = new StreamWriter(fileName, gd.writtenYet)) {
+			string time = System.DateTime.Now.Hour*60*60 + System.DateTime.Now.Minute*60 + System.DateTime.Now.Second + "." + System.DateTime.Now.Millisecond;
+			streamer.WriteLine("Destination,"+ch.shipID + "," + time);
+			streamer.Close();
 		}
-		
-		if(goodToWrite) {
-			//Capture relevant data about the present game space
-			using(StreamWriter streamer = new StreamWriter(fileName, gd.writtenYet)) {
-				streamer.WriteLine("Destination:"+ch.shipID + "," + Time.timeSinceLevelLoad.ToString("f2"));
-				streamer.Close();
-			}
-		}
+		gd.writtenYet = true;
 	}
 	
 	string getMyPlanetName() {

@@ -834,11 +834,11 @@ public class SU_SpaceSceneConstructionKitEditor : EditorWindow {
 		// --- HANDLE STARS ---
 		if (_starsEnabled) {
 			string _starName = _starsMatch[UnityEngine.Random.Range(0, _starsMatch.Count)].ToString();
-			Camera _spaceCamera = _sInstantiated.transform.Find("SpaceCamera").GetComponent<Camera>();
+			Camera _spaceCamera = _sInstantiated.transform.Find("SpaceCamera").camera;
 			if (_spaceCamera != null) {
 				// This is a workaround because Unity seems to not keep material material changes to previously instantiated cameras
 				Editor.DestroyImmediate(_spaceCamera.gameObject);
-				_spaceCamera = ((GameObject)PrefabUtility.InstantiatePrefab((GameObject) (GameObject)AssetDatabase.LoadAssetAtPath(_basePath + _prefabSpaceCamera, typeof (GameObject)))).GetComponent<Camera>();
+				_spaceCamera = ((GameObject)PrefabUtility.InstantiatePrefab((GameObject) (GameObject)AssetDatabase.LoadAssetAtPath(_basePath + _prefabSpaceCamera, typeof (GameObject)))).camera;
 				_spaceCamera.transform.parent = _sInstantiated.transform;
 			}
 			_spaceCamera.GetComponent<Skybox>().material = (Material)AssetDatabase.LoadAssetAtPath(_basePath + _pathStars + _starName + ".mat", typeof (Material));			
@@ -861,7 +861,7 @@ public class SU_SpaceSceneConstructionKitEditor : EditorWindow {
 				GameObject _nebulaInstantiated = (GameObject)PrefabUtility.InstantiatePrefab((GameObject) _nebulaPrefab);			
 				_nebulaInstantiated.transform.parent = _sInstantiated.transform;
 				string _nebulaName = _nebulasMatch[UnityEngine.Random.Range(0, _nebulasMatch.Count)].ToString();
-				_nebulaInstantiated.GetComponent<Renderer>().material = (Material)AssetDatabase.LoadAssetAtPath(_basePath + _pathNebulas + _nebulaName + ".mat", typeof (Material));					
+				_nebulaInstantiated.renderer.material = (Material)AssetDatabase.LoadAssetAtPath(_basePath + _pathNebulas + _nebulaName + ".mat", typeof (Material));					
 				_nebulaInstantiated.transform.eulerAngles = new Vector3(UnityEngine.Random.Range(0,360), UnityEngine.Random.Range(0,360), UnityEngine.Random.Range(0,360));
 			}
 		}
@@ -884,13 +884,13 @@ public class SU_SpaceSceneConstructionKitEditor : EditorWindow {
 				_galaxyName = _galaxiesMatch[UnityEngine.Random.Range(0, _galaxiesMatch.Count)].ToString();
 				_galaxyInstantiated.transform.eulerAngles = new Vector3(UnityEngine.Random.Range(0,360), UnityEngine.Random.Range(0,360), UnityEngine.Random.Range(0,360));
 				float _newGalaxyScale = UnityEngine.Random.Range(-0.1f, 0.1f) + _galaxyDistanceScales[UnityEngine.Random.Range(0, _galaxyDistanceScales.Count)];
-				_galaxyTextureTransform.GetComponent<Renderer>().material = (Material)AssetDatabase.LoadAssetAtPath(_basePath + _pathGalaxies+_galaxyName+".mat", typeof (Material));
+				_galaxyTextureTransform.renderer.material = (Material)AssetDatabase.LoadAssetAtPath(_basePath + _pathGalaxies+_galaxyName+".mat", typeof (Material));
 				_galaxyInstantiated.transform.localScale = new Vector3(_newGalaxyScale, _newGalaxyScale, _newGalaxyScale);
 				_galaxyTextureTransform.Translate(new Vector3(0,0,(1.0f - _newGalaxyScale) * 1000),Space.Self);
-				_galaxyTextureTransform.Find("Point light").GetComponent<Light>().intensity = _galaxyTextureTransform.Find("Point light").GetComponent<Light>().intensity * _newGalaxyScale;				
+				_galaxyTextureTransform.Find("Point light").light.intensity = _galaxyTextureTransform.Find("Point light").light.intensity * _newGalaxyScale;				
 				if (!_galaxyLightHasFlare) {
 					// Disable light flare if not enabled
-					_galaxyTextureTransform.Find("Point light").GetComponent<Light>().flare = null;
+					_galaxyTextureTransform.Find("Point light").light.flare = null;
 				}
 				if (!_galaxyIsLightsource) {
 					// Destroy light source if not enabled
@@ -946,12 +946,12 @@ public class SU_SpaceSceneConstructionKitEditor : EditorWindow {
 				_planetObject.transform.eulerAngles = new Vector3(UnityEngine.Random.Range(0,360), UnityEngine.Random.Range(0,360), UnityEngine.Random.Range(0,360));
 				_planetObject.GetComponent<SU_Planet>().planetRotation = new Vector3(0,0,_planetRotationScales[UnityEngine.Random.Range(0, _planetRotationScales.Count)]);
 				UnityEngine.Object _planetMaterial = AssetDatabase.LoadAssetAtPath(_basePath + _pathPlanets+_planetName+".mat", typeof (UnityEngine.Object));
-				_planetObject.GetComponent<Renderer>().material = (Material) _planetMaterial;
+				_planetObject.renderer.material = (Material) _planetMaterial;
 				
 				// Atmosphere
 				if (_planetAtmosphere) {
 					// Change the material of the atmosphere according to label on planet material
-					_planetInstantiated.transform.Find("Atmosphere").GetComponent<Renderer>().material = (Material) _hPlanetAtmospheres[GetPlanetAtmosphere(_planetMaterial)];
+					_planetInstantiated.transform.Find("Atmosphere").renderer.material = (Material) _hPlanetAtmospheres[GetPlanetAtmosphere(_planetMaterial)];
 				} else {
 					// Atmosphere not enabled, remove the atmosphere transform from the instantiated prefab
 					UnityEngine.Object.DestroyImmediate(_planetInstantiated.transform.Find("Atmosphere").gameObject);
@@ -988,7 +988,7 @@ public class SU_SpaceSceneConstructionKitEditor : EditorWindow {
 						_planetMoonMesh.transform.localPosition = new Vector3(_planetMoonMesh.transform.position.x * _moonDistance,0,0);
 						// Select and apply a random moon surface material
 						string _moonMaterial = _lPlanetMoons[UnityEngine.Random.Range(0, _lPlanetMoons.Count)];						
-						_planetMoonMesh.gameObject.GetComponent<Renderer>().material = (Material)AssetDatabase.LoadAssetAtPath(_basePath + _pathMoons + _moonMaterial + ".mat", typeof (Material));						
+						_planetMoonMesh.gameObject.renderer.material = (Material)AssetDatabase.LoadAssetAtPath(_basePath + _pathMoons + _moonMaterial + ".mat", typeof (Material));						
 					}					
 				}			
 				
@@ -1016,7 +1016,7 @@ public class SU_SpaceSceneConstructionKitEditor : EditorWindow {
 						float _planetRingsScale = UnityEngine.Random.Range(0.8f, 1.2f);
 						_planetRingsInstantiated.transform.localScale = new Vector3(_planetRingsScale, _planetRingsScale, _planetRingsScale);
 						string _ringMaterial = _lPlanetRings[UnityEngine.Random.Range(0, _lPlanetRings.Count)];
-						_planetRingsInstantiated.GetComponent<Renderer>().material = (Material)AssetDatabase.LoadAssetAtPath(_basePath + _pathRings + _ringMaterial + ".mat", typeof (Material));
+						_planetRingsInstantiated.renderer.material = (Material)AssetDatabase.LoadAssetAtPath(_basePath + _pathRings + _ringMaterial + ".mat", typeof (Material));
 					}
 				}
 				
@@ -1056,8 +1056,8 @@ public class SU_SpaceSceneConstructionKitEditor : EditorWindow {
 			
 			Transform _localStarChildTransform = _localStarInstantiated.transform.Find("LocalStarChild");
 			
-			_localStarChildTransform.Find("ParticleSystem-Body").GetComponent<ParticleSystem>().GetComponent<Renderer>().material = (Material)AssetDatabase.LoadAssetAtPath(_basePath + _pathLocalStarsBody + _localStarBodyMatch[UnityEngine.Random.Range(0, _localStarBodyMatch.Count)] + ".mat", typeof (Material));				
-			_localStarChildTransform.Find("ParticleSystem-Prominence").GetComponent<ParticleSystem>().GetComponent<Renderer>().material = (Material)AssetDatabase.LoadAssetAtPath(_basePath + _pathLocalStarsProminence + _localStarProminenceMatch[UnityEngine.Random.Range(0, _localStarProminenceMatch.Count)] + ".mat", typeof (Material));				
+			_localStarChildTransform.Find("ParticleSystem-Body").GetComponent<ParticleSystem>().renderer.material = (Material)AssetDatabase.LoadAssetAtPath(_basePath + _pathLocalStarsBody + _localStarBodyMatch[UnityEngine.Random.Range(0, _localStarBodyMatch.Count)] + ".mat", typeof (Material));				
+			_localStarChildTransform.Find("ParticleSystem-Prominence").GetComponent<ParticleSystem>().renderer.material = (Material)AssetDatabase.LoadAssetAtPath(_basePath + _pathLocalStarsProminence + _localStarProminenceMatch[UnityEngine.Random.Range(0, _localStarProminenceMatch.Count)] + ".mat", typeof (Material));				
 			if (!_localStarIsLightsource) {
 				// Destroy light source if not enabled
 				UnityEngine.Object.DestroyImmediate(_localStarChildTransform.Find("Point light").gameObject);
@@ -1067,20 +1067,20 @@ public class SU_SpaceSceneConstructionKitEditor : EditorWindow {
 				if (_localStarLightColor != LocalStarLightColor.WHITE) {
 					switch (_localStarColorUsed) {
 					case LocalStarColor.BLUE:
-						_localStarChildTransform.Find("Directional light").GetComponent<Light>().color = _colorLocalStarBlue;
-						_localStarChildTransform.Find("Point light").GetComponent<Light>().color = _colorLocalStarBlue;
+						_localStarChildTransform.Find("Directional light").light.color = _colorLocalStarBlue;
+						_localStarChildTransform.Find("Point light").light.color = _colorLocalStarBlue;
 						break;
 					case LocalStarColor.YELLOW:
-						_localStarChildTransform.Find("Directional light").GetComponent<Light>().color = _colorLocalStarYellow;
-						_localStarChildTransform.Find("Point light").GetComponent<Light>().color = _colorLocalStarYellow;
+						_localStarChildTransform.Find("Directional light").light.color = _colorLocalStarYellow;
+						_localStarChildTransform.Find("Point light").light.color = _colorLocalStarYellow;
 						break;
 					case LocalStarColor.ORANGE:
-						_localStarChildTransform.Find("Directional light").GetComponent<Light>().color = _colorLocalStarOrange;
-						_localStarChildTransform.Find("Point light").GetComponent<Light>().color = _colorLocalStarOrange;
+						_localStarChildTransform.Find("Directional light").light.color = _colorLocalStarOrange;
+						_localStarChildTransform.Find("Point light").light.color = _colorLocalStarOrange;
 						break;
 					case LocalStarColor.RED:
-						_localStarChildTransform.Find("Directional light").GetComponent<Light>().color = _colorLocalStarRed;
-						_localStarChildTransform.Find("Point light").GetComponent<Light>().color = _colorLocalStarRed;
+						_localStarChildTransform.Find("Directional light").light.color = _colorLocalStarRed;
+						_localStarChildTransform.Find("Point light").light.color = _colorLocalStarRed;
 						break;						
 					}							
 				}
@@ -1088,35 +1088,35 @@ public class SU_SpaceSceneConstructionKitEditor : EditorWindow {
 				// Light Intensity
 				switch (_localStarLightIntensityUsed) {
 				case LocalStarLightIntensity.VERY_LOW:
-					_localStarChildTransform.Find("Directional light").GetComponent<Light>().intensity = _intensityLocalStarVeryLow;
-					_localStarChildTransform.Find("Point light").GetComponent<Light>().intensity = _intensityLocalStarVeryLow;
+					_localStarChildTransform.Find("Directional light").light.intensity = _intensityLocalStarVeryLow;
+					_localStarChildTransform.Find("Point light").light.intensity = _intensityLocalStarVeryLow;
 					break;
 				case LocalStarLightIntensity.LOW:
-					_localStarChildTransform.Find("Directional light").GetComponent<Light>().intensity = _intensityLocalStarLow;
-					_localStarChildTransform.Find("Point light").GetComponent<Light>().intensity = _intensityLocalStarLow;
+					_localStarChildTransform.Find("Directional light").light.intensity = _intensityLocalStarLow;
+					_localStarChildTransform.Find("Point light").light.intensity = _intensityLocalStarLow;
 					break;
 				case LocalStarLightIntensity.MEDIUM:
-					_localStarChildTransform.Find("Directional light").GetComponent<Light>().intensity = _intensityLocalStarMedium;
-					_localStarChildTransform.Find("Point light").GetComponent<Light>().intensity = _intensityLocalStarMedium;
+					_localStarChildTransform.Find("Directional light").light.intensity = _intensityLocalStarMedium;
+					_localStarChildTransform.Find("Point light").light.intensity = _intensityLocalStarMedium;
 					break;
 				case LocalStarLightIntensity.HIGH:
-					_localStarChildTransform.Find("Directional light").GetComponent<Light>().intensity = _intensityLocalStarHigh;
-					_localStarChildTransform.Find("Point light").GetComponent<Light>().intensity = _intensityLocalStarHigh;
+					_localStarChildTransform.Find("Directional light").light.intensity = _intensityLocalStarHigh;
+					_localStarChildTransform.Find("Point light").light.intensity = _intensityLocalStarHigh;
 					break;
 				case LocalStarLightIntensity.VERY_HIGH:
-					_localStarChildTransform.Find("Directional light").GetComponent<Light>().intensity = _intensityLocalStarVeryHigh;
-					_localStarChildTransform.Find("Point light").GetComponent<Light>().intensity = _intensityLocalStarVeryHigh;
+					_localStarChildTransform.Find("Directional light").light.intensity = _intensityLocalStarVeryHigh;
+					_localStarChildTransform.Find("Point light").light.intensity = _intensityLocalStarVeryHigh;
 					break;				
 				}
 								
 				// Light Flare
 				if (!_localStarLightHasFlare) {
 					// Disable light flare if not enabled
-					_localStarChildTransform.Find("Point light").GetComponent<Light>().flare = null;
+					_localStarChildTransform.Find("Point light").light.flare = null;
 				} else {
 					// Select the correct flare color & size
 					string _localStarFlareName = _localStarFlareMatch[UnityEngine.Random.Range(0, _localStarFlareMatch.Count)];
-					_localStarChildTransform.Find("Point light").GetComponent<Light>().flare = (Flare)AssetDatabase.LoadAssetAtPath(_basePath + _pathLocalStarsFlare + _localStarFlareName + ".flare", typeof(Flare));
+					_localStarChildTransform.Find("Point light").light.flare = (Flare)AssetDatabase.LoadAssetAtPath(_basePath + _pathLocalStarsFlare + _localStarFlareName + ".flare", typeof(Flare));
 				}
 			}			
 		}										

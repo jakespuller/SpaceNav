@@ -150,7 +150,7 @@ public class CameraPathBezierAnimatorEditor : Editor {
 					cam.AddComponent<Camera>();
 					//Retreive camera settings from the main camera
 					if(sceneCamera!=null){
-						cam.GetComponent<Camera>().backgroundColor = sceneCamera.backgroundColor;
+						cam.camera.backgroundColor = sceneCamera.backgroundColor;
 						if(sceneCameraSkybox!=null)
 							cam.AddComponent<Skybox>().material = sceneCameraSkybox.material;
 						else
@@ -159,10 +159,10 @@ public class CameraPathBezierAnimatorEditor : Editor {
 					}
 					cam.transform.position = previewCamPos;
 					cam.transform.rotation = previewCamRot;
-					cam.GetComponent<Camera>().fieldOfView = previewCamFOV;
-					cam.GetComponent<Camera>().targetTexture = pointPreviewTexture;
-			        cam.GetComponent<Camera>().Render();
-			        cam.GetComponent<Camera>().targetTexture = null;
+					cam.camera.fieldOfView = previewCamFOV;
+					cam.camera.targetTexture = pointPreviewTexture;
+			        cam.camera.Render();
+			        cam.camera.targetTexture = null;
 					DestroyImmediate(cam);
 					
 					//Display the camera preview

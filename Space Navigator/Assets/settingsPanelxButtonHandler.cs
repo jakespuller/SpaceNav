@@ -7,20 +7,8 @@ public class settingsPanelxButtonHandler : MonoBehaviour {
 	public GameObject settingsPanel;
 	public bool moved = false;
 	
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
-	
-	
 	void OnClick ()
-	{
-		
+	{	
 		Vector3 temp = new Vector3 (settingsPanel.transform.position.x,settingsPanel.transform.position.y,settingsPanel.transform.position.z);
 		
 		if(!moved)
@@ -32,7 +20,6 @@ public class settingsPanelxButtonHandler : MonoBehaviour {
 		MoveThisTo (settingsPanel, temp,.4f);
 	}
 	
-		//---------------------------------------------------------------------
 	void MoveThisTo (GameObject go, Vector3 pointB, float speed)
 	{
 		
@@ -42,15 +29,7 @@ public class settingsPanelxButtonHandler : MonoBehaviour {
 		ht.Add("time",speed);
 		ht.Add("EaseType",iTween.EaseType.easeOutCubic);
 		ht.Add("oncomplete","stopAni");
-		//ht.Add ("orienttopath",false);
-		
 		
         iTween.MoveTo(go,ht);
-	}//---------------------------------------------------------------------
-
-			
-	void stopAni()
-	{//animation stopped
-		//moving = false;
-	}
+	}		
 }

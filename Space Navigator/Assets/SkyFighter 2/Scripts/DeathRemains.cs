@@ -42,8 +42,8 @@ public class DeathRemains : MonoBehaviour {
 
 	void PlayexplodeAudio ()
 	{
-		GetComponent<AudioSource>().clip = explodeAudio;
-		GetComponent<AudioSource>().Play();
+		audio.clip = explodeAudio;
+		audio.Play();
 	
 	}
 

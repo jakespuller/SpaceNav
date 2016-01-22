@@ -35,9 +35,6 @@ public class SpaceNavUDP
 				//Get the game controller in order to act on sub-objects
 				GameObject control = GameObject.FindGameObjectWithTag ("GameController");
 				spawnSystem ss = (spawnSystem)control.GetComponent ("spawnSystem");
-//			if (ss.automate_level = pathMarker.SIMILAR) {		
-//						sendString ("init" + 0); //String "init" is used to pass host information to trajectory server
-//				}
 
 				string level = "";
 				switch (ss.automate_level) {
@@ -54,13 +51,6 @@ public class SpaceNavUDP
 						sendString ("init" + 3);
 						break;
 				}
-//		public static int SIMILAR = 2;
-//		public static int DISSIMILAR = 3;
-//		public static int STRAIGHT = 0;
-//		public static int NONE = 1;
-				//Debug.Log("init" + ss.automate_level);
-				//sendString ("init"); //String "init" is used to pass host information to trajectory server
-				//Set up a receiver to listen for response from the trajectory server
 				receiveThread = new Thread (new ThreadStart (ReceiveData));
 				receiveThread.IsBackground = true;
 				receiveThread.Start ();

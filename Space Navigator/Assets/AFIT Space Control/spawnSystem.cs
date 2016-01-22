@@ -34,22 +34,24 @@ public class spawnSystem : MonoBehaviour
 		public GameObject moveHelper4;
 	
 		public GameObject bonus;
-	
+
+
 		public GameObject noFlyZone;
 		public int numNFZs; 
 		private GameObject[] noFlyZones;
 		private GameObject noFlyZone1;
 		private GameObject noFlyZone2;
-	
 		public GameObject gameData;
-	
+
+		//Screen points
 		private Vector3 botLeftPoint;
 		private Vector3 topRightPoint;
 		private int minX;
 		private int minY;
 		private int maxX;
 		private int maxY;
-	
+
+		//Default spawn rates
 		private int nextShipSpawnTime = 0;
 		public int shipSpawnRate = 5;
 		private int nextNoFlySpawnTime = 0;
@@ -85,9 +87,10 @@ public class spawnSystem : MonoBehaviour
 		private float selShipXPos;
 		private float selShipYPos;
 		public GameObject selShip;
+		public int eyeTrackerOn;
 
+		public EyeTrackerTCP TCPconnection;
 		public SpaceNavUDP UDPConnection;
-
 		// Use this for initialization
 		void Start ()
 		{
@@ -141,79 +144,28 @@ public class spawnSystem : MonoBehaviour
 						//gameData gd = (gameData)data.GetComponent ("gameData");
 						//gd.loadExperimentSettings ();
 				}
-				gameData gd2 = (gameData)data.GetComponent ("gameData");
-				gd2.setGameSettings (4);
-				gd2.writtenYet = false;
-				automate_level = gd2.automation_level;
-		
-				scriptedInstance = gd2.scriptedInstance;
-		
-				if (scriptedInstance) {
-						readFromFile ();
-						//Stop new things from happening
-						nextShipSpawnTime = 1000;
-						nextNoFlySpawnTime = 1000;
-						nextBonusSpawnTime = 1000;
-						GameObject gotc = GameObject.FindGameObjectWithTag ("TimerController");
-						TimerController tc = (TimerController)gotc.GetComponent ("TimerController");
-						tc.timeLeft = 10;
-						//Place NFZs according to the script
-						numNFZs = numScriptNFZs;
-						noFlyZones = new GameObject[numNFZs];
-						for (int i = 0; i < numNFZs; i++) {
-								noFlyZones [i] = (GameObject)Instantiate (noFlyZone);
-								noFlyZones [i].transform.position = new Vector3 (nfzXVals [i], nfzYVals [i], 0);
-						}
-			
-						//Place bonuses according to the script
-						for (int i = 0; i < numBonuses; i++) {
-								Instantiate (bonus, new Vector3 (bonusXVals [i], bonusYVals [i], 0), new Quaternion (0, 0, 0, 1));
-						}
-	
-						//Place other ships according to the script
-						for (int i = 0; i < numOtherShips; i++) {
-								//Create the ship and its mover helper
-								//Debug.Log ("spawning from here: " + (otherShipDests [i] - 1) + "  " + otherShipXVals [i] + "  " + otherShipYVals [i]);
-								GameObject shippy = spawnShipHere ((otherShipDests [i] - 1), new Vector3 (otherShipXVals [i], otherShipYVals [i], 0));
-								moveBehaviourScript mbs = (moveBehaviourScript)shippy.GetComponent ("moveBehaviourScript");
-				
-								//Create the initial path marker to start from
-								pathMarker firstMarker = (pathMarker)mbs.MoveHelper.GetComponent ("pathMarker");
-								firstMarker.assignedToObj = shippy;
-								mbs.path = firstMarker;
-				
-								//Add all of the other markers along the path
-								for (int j = 1; j < ((ArrayList) otherPathsX[i]).Count; j++) {
-										GameObject newMarker = (GameObject)Instantiate (marker, new Vector3 ((float)((ArrayList)otherPathsX [i]) [j], (float)((ArrayList)otherPathsY [i]) [j], 0), new Quaternion (0, 0, 0, 1));
-										firstMarker.enqueue (newMarker);
-										firstMarker.setPos ();
-								}
-						}
-				
-						//Place place selected ship according to the script
-						//GameObject selShip = spawnShipHere((destNum - 1), new Vector3(selShipXPos, selShipYPos, 170));
-						selShip = spawnShipHere ((destNum - 1), new Vector3 (selShipXPos, selShipYPos, 0));
-						InvokeRepeating ("blink", (float)0.2, (float)0.2);
-
-						UDPConnection = new SpaceNavUDP ();
-						UDPConnection.init ();
-			
-				} else { //NOT A SCRIPTED INSTANCE, just playing the game normally
-						//We create numNFZ no-fly zones that will move around the screen
-						noFlyZones = new GameObject[numNFZs];
-						for (int i = 0; i < numNFZs; i++) {
-								noFlyZones [i] = (GameObject)Instantiate (noFlyZone);
-								noFlyZones [i].transform.position = getRandomPointOnScreen ();
-						}
-
-						UDPConnection = new SpaceNavUDP ();
-						UDPConnection.init ();
-					//Debug.Log ("called init");
+				gameData gd = (gameData)data.GetComponent ("gameData");
+				gd.setGameSettings (4);
+				automate_level = gd.automation_level;
+				//NOT A SCRIPTED INSTANCE, just playing the game normally
+				//We create numNFZ no-fly zones that will move around the screen
+				noFlyZones = new GameObject[numNFZs];
+				for (int i = 0; i < numNFZs; i++) {
+						noFlyZones [i] = (GameObject)Instantiate (noFlyZone);
+						noFlyZones [i].transform.position = getRandomPointOnScreen ();
 				}
-
+				eyeTrackerOn = gd.pram_list.eyeTrackerOn;
+				if (gd.pram_list.eyeTrackerOn > 0) {
+					TCPconnection = new EyeTrackerTCP();
+					TCPconnection.init ();
+					TCPconnection.gamelevel = gd.gameLevel;
+				}
+				if (gd.pram_list.trajectorySearchOn > 0) {
+					UDPConnection = new SpaceNavUDP ();
+					UDPConnection.init ();
+				}
 		}
 	
-
 		Boolean readFromFile ()
 		{
 				Boolean successful = false;
@@ -233,27 +185,17 @@ public class spawnSystem : MonoBehaviour
 				}
 				string[] chunks = text.Split (new char[]{':'});
 
-				//Time stamp
-				//float time = Convert.ToSingle(chunks[0]);
-				//print("Time = " + time);
-		
-				//Bonuses
-				//Debug.Log (chunks [0]);
-				//Debug.Log (chunks [1]);
 				string[] bonusString = chunks [1].Split (new char[]{';'});
-				//Debug.Log (bonusString);
+
 				numBonuses = Convert.ToInt32 (bonusString [0]);
-				//Debug.Log ("num bonus:  " + numBonuses);
+
 				bonusXVals = new float[numBonuses];
 				bonusYVals = new float[numBonuses];
-				//bonusLifeSpans = new float[numBonuses];
+
 				for (int i = 1; i <= numBonuses; i++) {
 						string[] position = bonusString [i].Split (new char[]{','});
 						bonusXVals [i - 1] = Convert.ToSingle (position [0]);
 						bonusYVals [i - 1] = Convert.ToSingle (position [1]);
-						//Debug.Log("Test " + Convert.ToSingle (position [2]));
-						//bonusLifeSpans [i - 1] = Convert.ToSingle (position [2]);
-						//print("Bonus " + i + " at (" + bonusXVals[i-1] + ", " + bonusYVals[i-1] +"), Life = " + bonusLifeSpans[i-1]);
 				}
 				
 		
@@ -274,7 +216,7 @@ public class spawnSystem : MonoBehaviour
 						string[] otherShipData = otherShipStrings [(i * 2) - 1].Split (new char[]{';'});
 						for (int j = 0; j < (otherShipData.Length-1); j++) {
 								string[] position = otherShipData [j].Split (new char[]{','});
-								//Debug.Log (position.Length);
+
 								if (position.Length == 6) {				
 										otherShipDests [i - 1] = Convert.ToInt32 (position [0]);
 										otherShipXVals [i - 1] = Convert.ToSingle (position [1]);
@@ -290,7 +232,7 @@ public class spawnSystem : MonoBehaviour
 										otherShipRotYs [i - 1] = Convert.ToSingle (position [5]);
 										otherShipLifeSpans [i - 1] = Convert.ToSingle (position [6]);
 								}
-								//print ("Ship " + i + " (dest = " + otherShipDests [i - 1] + ")at Pos (" + otherShipXVals [i - 1] + ", " + otherShipYVals [i - 1] + "), Rot (" + otherShipRotXs [i - 1] + ", " + otherShipRotYs [i - 1] + "), Life = " + otherShipLifeSpans [i - 1]);
+							
 						}
 						//Path markers for the ship
 						otherPathsX [i - 1] = new ArrayList ();
@@ -300,7 +242,6 @@ public class spawnSystem : MonoBehaviour
 								string[] pathPosition = otherShipPath [k].Split (new char[]{','});
 								((ArrayList)otherPathsX [i - 1]).Add (Convert.ToSingle (pathPosition [0]));
 								((ArrayList)otherPathsY [i - 1]).Add (Convert.ToSingle (pathPosition [1]));
-								//print ("Ship " + i + " Marker " + k + " at Pos (" + Convert.ToSingle(pathPosition[0]) + ", " + Convert.ToSingle(pathPosition[1]) + ")");
 						}
 				}
 		
@@ -315,17 +256,12 @@ public class spawnSystem : MonoBehaviour
 						nfzXVals [i - 1] = Convert.ToSingle (position [0]);
 						nfzYVals [i - 1] = Convert.ToSingle (position [1]);
 						nfzMoveTimes [i - 1] = Convert.ToSingle (position [2]);
-						//print("No Fly Zone " + i + " at Pos (" + nfzXVals[i-1] + ", " + nfzYVals[i-1] + "), Last moved at " + nfzMoveTimes[i-1]);
 				}
 		
 				//Destination Planet
-				string[] destString = chunks [4].Split (new char[]{';'});
+				string[] destString = chunks [4].Split (new char[]{','});
 				destNum = Convert.ToInt32 (destString [0]);
-				//string[] destPos = destString[1].Split(new char[]{','});
-				//float destXPos = Convert.ToSingle(destPos[0]);
-				//float destYPos = Convert.ToSingle(destPos[1]);
-				//print("Dest Planet " + destNum + "at Pos (" + destXPos + ", " + destYPos + ")");
-		
+
 				//Selected ship
 				string[] selShipString = chunks [5].Split (new char[]{','});
 				//Debug.Log (selShipString.Length);
@@ -335,37 +271,16 @@ public class spawnSystem : MonoBehaviour
 				} else {
 						selShipXPos = Convert.ToSingle (selShipString [1]);
 						selShipYPos = Convert.ToSingle (selShipString [2]);
-				}
-				//float selShipRotX = Convert.ToSingle(selShipString[2]);
-				//float selShipRotY = Convert.ToSingle(selShipString[3]);
-				//float selShipLifeSpan = Convert.ToSingle(selShipString[4]);
-				//float selShipDrawTime = Convert.ToSingle(selShipString[5]);
-				//print("Selected ship at Pos (" + selShipXPos + ", " + selShipYPos + "), Rot (" + selShipRotX + ", " + selShipRotY + "), Life = " + selShipLifeSpan + ", Draw Time = " + selShipDrawTime);
-		
-//		//This Path Markers
-//		string[] thisPathString = chunks[6].Split(new char[]{';'});
-//		for(int i = 1; i <= Convert.ToInt32(thisPathString[0]); i++) {
-//			string[] position = thisPathString[i].Split(new char[]{','});
-//			float xPos = Convert.ToSingle(position[0]);
-//			float yPos = Convert.ToSingle(position[1]);
-//			//print("This path marker " + i + " at Pos (" + xPos + ", " + yPos + ")");
-//		}
-						
-				//Game score at capture time
-				//int score = Convert.ToInt32(chunks[7]);
-				//print("Score = " + score);
+				}	
 		
 				//Ship spawning rate
 				shipSpawnRate = Convert.ToInt32 (chunks [8]);
-				//print("Ship Spawn Rate = " + shipSpawnRate);
 		
 				//No fly zone move interval
 				noFlyMoveRate = Convert.ToInt32 (chunks [9]);	
-				//print("NFZ move rate = " + noFlyMoveRate);
 		
 				//Bonus spawning rate
 				bonusSpawnRate = Convert.ToInt32 (chunks [10]);	
-				//print("Bonus spawn rate = " + bonusSpawnRate);
 		
 				file.Close ();
 				return successful;
@@ -385,12 +300,14 @@ public class spawnSystem : MonoBehaviour
 		{
 				//Choose a random ship, place it in a random position, and give it a destination
 				int rand = UnityEngine.Random.Range (1, 5);
-
 				GameObject ship = (GameObject)shipPrefabs [rand - 1];
+
+				//Selects the side the ship spawns on
 				int side = UnityEngine.Random.Range (1, 5);
 				while (side == lastSpawnLocation) {
 						side = UnityEngine.Random.Range (1, 5);
 				}
+				//Creates the copy of the prefab
 				GameObject shipS = (GameObject)Instantiate (ship, getRandomPointOnPerimeter (side, false), new Quaternion (0, 0, 0, 1));//clone prefab
 				moveBehaviourScript mbs = (moveBehaviourScript)shipS.GetComponent ("moveBehaviourScript");
 				if (side == 1 || side == 2) {
@@ -416,7 +333,7 @@ public class spawnSystem : MonoBehaviour
 				pm.dot3 = dot3;
 				pm.assignedToObj = shipS;
 				lastSpawnLocation = side;
-		}	
+		}
 	
 		public GameObject spawnShipHere (int shipType, Vector3 startSpot)
 		{
@@ -441,7 +358,6 @@ public class spawnSystem : MonoBehaviour
 				pm.dot3 = dot3;
 				pm.assignedToObj = shipS;
 		
-				//shipS.transform.eulerAngles = new Vector3((float)70.03, (float) 70.00, (float) 0);
 				return shipS;
 		}
 
@@ -458,23 +374,23 @@ public class spawnSystem : MonoBehaviour
 		{
 				if (side == 1) { //Left
 						if (dest) 
-								return new Vector3 ((float)(minX - 3.1), UnityEngine.Random.Range (minY, maxY), 0);
-						return new Vector3 (minX - 3, UnityEngine.Random.Range (minY, maxY), 0);
+								return new Vector3 ((float)(minX - 2.1), UnityEngine.Random.Range (minY, maxY), 0);
+						return new Vector3 (minX - 2, UnityEngine.Random.Range (minY, maxY), 0);
 				}
 				if (side == 2) { //Bottom
 						if (dest)
-								return new Vector3 (UnityEngine.Random.Range (minX, maxX), (float)(minY - 3.1), 0);
-						return new Vector3 (UnityEngine.Random.Range (minX, maxX), minY - 3, 0);
+								return new Vector3 (UnityEngine.Random.Range (minX, maxX), (float)(minY - 2.1), 0);
+						return new Vector3 (UnityEngine.Random.Range (minX, maxX), minY - 2, 0);
 				}
 				if (side == 3) { //Right
 						if (dest)
-								return new Vector3 ((float)(maxX + 3.1), UnityEngine.Random.Range (minY, maxY), 0);
-						return new Vector3 (maxX + 3, UnityEngine.Random.Range (minY, maxY), 0);
+								return new Vector3 ((float)(maxX + 2.1), UnityEngine.Random.Range (minY, maxY), 0);
+						return new Vector3 (maxX + 2, UnityEngine.Random.Range (minY, maxY), 0);
 				}
 				if (side == 4) { //Top
 						if (dest)
-								return new Vector3 (UnityEngine.Random.Range (minX, maxX), (float)(maxY + 3.1), 0);
-						return new Vector3 (UnityEngine.Random.Range (minX, maxX), maxY + 3, 0);
+								return new Vector3 (UnityEngine.Random.Range (minX, maxX), (float)(maxY + 2.1), 0);
+						return new Vector3 (UnityEngine.Random.Range (minX, maxX), maxY + 2, 0);
 				}
 				return new Vector3 (0, 0, 170);
 		}
@@ -483,18 +399,31 @@ public class spawnSystem : MonoBehaviour
 		{
 				if (selShip != null) {
 						moveBehaviourScript mbs = (moveBehaviourScript)selShip.GetComponent ("moveBehaviourScript");
-						mbs.MoveHelper.GetComponent<Renderer>().enabled = !mbs.MoveHelper.GetComponent<Renderer>().enabled;
+						mbs.MoveHelper.renderer.enabled = !mbs.MoveHelper.renderer.enabled;
 				} else {
 						CancelInvoke ("blink");
 				}
 		}
-	
+		
 		// Update is called once per frame
 		void Update ()
 		{
+				GameObject data = GameObject.FindGameObjectWithTag("GameData");
+				gameData gd2 = (gameData) data.GetComponent("gameData");
 				if ((int)Time.timeSinceLevelLoad == nextShipSpawnTime) {
 						spawnNewShip ();
 						nextShipSpawnTime = (int)Time.timeSinceLevelLoad + shipSpawnRate;
+						try
+						{
+							gd2.pram_list.numOfShips += 1.0f;
+							string fileName = gd2.fileName;//gd2.unique_id + "Level_" + gd2.gameLevel + "_Data.txt";
+							using(StreamWriter streamer = new StreamWriter(fileName, gd2.writtenYet)) {
+								string time = System.DateTime.Now.Hour*60*60 + System.DateTime.Now.Minute*60 + System.DateTime.Now.Second + "." + System.DateTime.Now.Millisecond;
+								streamer.WriteLine("NumOfShips,"+gd2.pram_list.numOfShips+","+time);
+								streamer.Close();
+							}
+							gd2.writtenYet = true;
+						} catch (System.NullReferenceException) {}
 				}
 				if ((int)Time.timeSinceLevelLoad == nextNoFlySpawnTime) {
 						for (int i = 0; i < numNFZs; i++) {
@@ -508,23 +437,11 @@ public class spawnSystem : MonoBehaviour
 						Instantiate (bonus, getRandomPointOnScreen (), new Quaternion (0, 0, 0, 1));
 						nextBonusSpawnTime = (int)Time.timeSinceLevelLoad + bonusSpawnRate;
 				}
-
-		Resources.UnloadUnusedAssets();
-		
-		}
-
-		private void OnDisable ()
-		{
-				if (UDPConnection.receiveThread != null) 
-						UDPConnection.receiveThread.Abort ();
-				UDPConnection.client.Close ();
-		}
-	
-		private void OnApplicationQuit ()
-		{
-				if (UDPConnection.receiveThread != null) 
-						UDPConnection.receiveThread.Abort ();
-				UDPConnection.client.Close ();
+				if (gd2.pram_list.eyeTrackerOn > 0) {
+					gd2.screen_width = TCPconnection.screen_width;
+					gd2.screen_height = TCPconnection.screen_height;
+				}
+				Resources.UnloadUnusedAssets();
 		}
 	
 }

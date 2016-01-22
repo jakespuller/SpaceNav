@@ -2,6 +2,8 @@
 using System.Collections;
 using System.IO;
 
+//Used for determining when a ship enters a No Fly Zone
+
 public class penaltyHandler : MonoBehaviour {
 	
 	public GameObject scoreObject;
@@ -30,22 +32,14 @@ public class penaltyHandler : MonoBehaviour {
 			GameObject data = GameObject.FindGameObjectWithTag("GameData");
 			gameData gd = (gameData) data.GetComponent("gameData");
 			
-			string fileName;
-			bool goodToWrite = true;
-			if(gd.scriptedInstance) {
-				goodToWrite = false;
-					fileName = "Response_" + gd.instanceNum + ".txt";
-			} else {
-				fileName = "Level_" + gd.gameLevel + "_Data.txt";
+			string fileName = gd.fileName;//gd.unique_id + "Level_" + gd.gameLevel + "_Data.txt";
+			//Capture relevant data about the present game space
+			using(StreamWriter streamer = new StreamWriter(fileName, gd.writtenYet)) {
+				string timeEnter = System.DateTime.Now.Hour*60*60 + System.DateTime.Now.Minute*60 + System.DateTime.Now.Second + "." + System.DateTime.Now.Millisecond;
+				streamer.WriteLine("NFZEnter,"+ch.shipID + "," + timeEnter);
+				streamer.Close();
 			}
-			
-			if(goodToWrite) {
-				//Capture relevant data about the present game space
-				using(StreamWriter streamer = new StreamWriter(fileName, gd.writtenYet)) {
-					streamer.WriteLine("NFZEnter:"+ch.shipID + "," + Time.timeSinceLevelLoad.ToString("f2"));
-					streamer.Close();
-				}
-			}
+			gd.writtenYet = true;
 		}
 	}
 	
@@ -58,22 +52,14 @@ public class penaltyHandler : MonoBehaviour {
 			GameObject data = GameObject.FindGameObjectWithTag("GameData");
 			gameData gd = (gameData) data.GetComponent("gameData");
 			
-			string fileName;
-			bool goodToWrite = true;
-			if(gd.scriptedInstance) {
-				goodToWrite = false;
-					fileName = "Response_" + gd.instanceNum + ".txt";
-			} else {
-				fileName = "Level_" + gd.gameLevel + "_Data.txt";
+			string fileName = gd.fileName;//gd.unique_id + "Level_" + gd.gameLevel + "_Data.txt";
+			//Capture relevant data about the present game space
+			using(StreamWriter streamer = new StreamWriter(fileName, gd.writtenYet)) {
+				string exitTime = System.DateTime.Now.Hour*60*60 + System.DateTime.Now.Minute*60 + System.DateTime.Now.Second + "." + System.DateTime.Now.Millisecond;
+				streamer.WriteLine("NFZExit,"+ch.shipID + "," + exitTime);
+				streamer.Close();
 			}
-			
-			if(goodToWrite) {
-				//Capture relevant data about the present game space
-				using(StreamWriter streamer = new StreamWriter(fileName, gd.writtenYet)) {
-					streamer.WriteLine("NFZExit:"+ch.shipID + "," + Time.timeSinceLevelLoad.ToString("f2"));
-					streamer.Close();
-				}
-			}
+			gd.writtenYet = true;
 		}
 	}
 	

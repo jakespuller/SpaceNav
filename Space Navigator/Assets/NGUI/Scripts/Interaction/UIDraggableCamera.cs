@@ -1,6 +1,6 @@
 //----------------------------------------------
 //            NGUI: Next-Gen UI kit
-// Copyright Â© 2011-2013 Tasharen Entertainment
+// Copyright © 2011-2013 Tasharen Entertainment
 //----------------------------------------------
 
 using UnityEngine;
@@ -70,7 +70,7 @@ public class UIDraggableCamera : IgnoreTimeScale
 
 	void Awake ()
 	{
-		mCam = GetComponent<Camera>();
+		mCam = camera;
 		mTrans = transform;
 
 		if (rootForBounds == null)
