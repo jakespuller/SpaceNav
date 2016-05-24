@@ -39,8 +39,7 @@ public class SpaceNavUDP
 //						sendString ("init" + 0); //String "init" is used to pass host information to trajectory server
 //				}
 
-				string level = "";
-				switch (ss.automate_level) {
+ 				switch (ss.automate_level) {
 				case pathMarker.SIMILAR:
 						sendString ("init" + 0);
 						break;

@@ -59,7 +59,7 @@ public class TimerController : MonoBehaviour
 //										}
 
 										//Go back to the main menu
-										if (gd.gameLevel <= 5) {
+										if (gd.gameLevel <= 20) {
 												StartCoroutine (pauseAndLoadNewLevel (3, 0));
 										} else {
 												StartCoroutine (pauseAndLoadNewLevel (3, 2));
@@ -73,7 +73,7 @@ public class TimerController : MonoBehaviour
 						popup = true;
 
 				} else {
-						if (gd.gameLevel <= 5) {
+						if (gd.gameLevel <= 20) {
 								//if we haven't run out of time yet, update the time on the screen
 								if (timeLeft % 60 < 10) {
 										GetComponent<GUIText>().text = "High Score: " + gd.highScore + "\nInstance: " + gd.instanceNum + "\nTime: " + Math.Floor (timeLeft / 60) + ":0" + (int)timeLeft % 60;
@@ -141,12 +141,12 @@ public class TimerController : MonoBehaviour
 			//Gather objects needed to check on high scores
 				GameObject data = GameObject.FindGameObjectWithTag ("GameData");
 				gameData gd = (gameData)data.GetComponent ("gameData");
-				using (StreamWriter streamer = new StreamWriter("HighScore.txt", gd.writtenYet)) {
-			streamer.WriteLine (sc.score);
-			streamer.Close ();
-		}
+				using (StreamWriter streamer = new StreamWriter("HighScore.txt", true)) {
+					streamer.WriteLine (sc.score);
+					streamer.Close ();
+				}
 
-		while (Time.realtimeSinceStartup < pauseEndTime) {
+				while (Time.realtimeSinceStartup < pauseEndTime) {
 						yield return 0;
 				}
 				Time.timeScale = 1;
@@ -161,7 +161,7 @@ public class TimerController : MonoBehaviour
 				//Send a round end string to the server so we know to save the player model, etc.
 				GameObject control = GameObject.FindGameObjectWithTag ("GameController");
 				spawnSystem ss = (spawnSystem)control.GetComponent ("spawnSystem");
-				ss.UDPConnection.sendString ("end");
+				//ss.UDPConnection.sendString ("end");
 
 				GameObject data = GameObject.FindGameObjectWithTag ("GameData");
 				gameData gd = (gameData)data.GetComponent ("gameData");
@@ -178,3 +178,4 @@ public class TimerController : MonoBehaviour
 				Application.LoadLevel (level);
 		}
 }
+ 

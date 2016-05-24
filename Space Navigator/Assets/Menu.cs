@@ -34,12 +34,12 @@ public class Menu : MonoBehaviour
 								} else {
 									
 										if (File.Exists ("HighScore.txt")) {
-												string[] test = File.ReadAllLines ("HighScore.txt");	
-												if (test.Length < i) {
-														maxComplete = test.Length;
-												} else {
+												//string[] test = File.ReadAllLines ("HighScore.txt");	
+												//if (test.Length < i) {
+												//		maxComplete = test.Length;
+												//} else {
 														maxComplete = i;
-												}
+												//}
 										} else {
 												maxComplete = 0;
 										}
